@@ -6,7 +6,8 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
     EXIST_ACCOUNT(101, "Account already exists", HttpStatus.BAD_REQUEST),
     NOT_FOUND(102, "Account not found", HttpStatus.NOT_FOUND),
-    INVALID_PASSWORD(103, "Invalid password", HttpStatus.BAD_REQUEST);
+    INVALID_PASSWORD(103, "Invalid password", HttpStatus.BAD_REQUEST),
+    CANNOT_LOAD_DATA(104, "Cannot load data", HttpStatus.BAD_REQUEST),
     ;
     private int code;
     private String message;
