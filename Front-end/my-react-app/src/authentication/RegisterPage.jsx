@@ -1,24 +1,6 @@
 import { useState, useEffect } from 'react'
 
 
-// ─── Validation ───────────────────────────────────────────────────────────────
-const validate = ({ username, email, password, roles }) => {
-    const errors = {};
-    if (!username.trim()) errors.username = "Username là bắt buộc!";
-    else if (username.trim().length < 3) errors.username = "Tối thiểu 3 ký tự!";
-    else if (username.trim().length > 20) errors.username = "Tối đa 20 ký tự!";
-
-    if (!email.trim()) errors.email = "Email là bắt buộc!";
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.email = "Email không đúng định dạng!";
-
-    if (!password) errors.password = "Password là bắt buộc!";
-    else if (password.length < 8) errors.password = "Tối thiểu 8 ký tự!";
-    else if (password.length > 20) errors.password = "Tối đa 20 ký tự!";
-
-    if (roles.size === 0) errors.roles = "Vui lòng chọn ít nhất một role!";
-    return errors;
-};
-
 // ─── SVG Illustration ─────────────────────────────────────────────────────────
 const WarehouseIllustration = () => (
     <svg viewBox="0 0 340 280" fill="none" xmlns="http://www.w3.org/2000/svg"
@@ -91,11 +73,46 @@ function Field({ label, error, children }) {
 }
 
 function RegisterPage() {
-    const [username, setUsername] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [roles, setRoles] = useState([]);
-
+    const [submitted, setSubmitted] = useState(false);
+    const[showPass, setShowPass] = useState(false);
+    const [agreed, setAgreed] = useState(false);
+    const [errors, setErrors] = useState({});
+    const [passwordStatus, setPasswordStatus] = useState({
+        valid: false,
+        message: "Password phải từ 8 đến 20 ký tự",
+    });
+    const [usernameStatus, setUsernameStatus] = useState({
+        valid: false,
+        message: "Username không được để trống",
+    });
+    const [emailStatus, setEmailStatus] = useState({
+        valid: false,
+        message: "Email không được để trống",
+    });
+    const [form, setForm] = useState({
+        username: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        roles: new Set(),
+    });
+    const [showConfirmPass, setShowConfirmPass] = useState(false);
+    const [confirmPassError, setConfirmPassError] = useState({
+        valid: null,
+        message: "",
+    });
+    const [payload, setPayload] = useState({
+        username: "",
+        email: "",
+        password: "",
+        roles: null,
+    });
+    const [touched, setTouched] = useState({
+        username: false,
+        email: false,
+        password: false,
+        confirmPassword: false,
+    });
 
     const loadRoles = async () => {
         const url = 'http://localhost:9000/api/roles';
@@ -110,7 +127,7 @@ function RegisterPage() {
                         value: roleName,
                         label: role.label || roleName,
                         icon: role.icon || "👤",
-                    }; 
+                    };
                 });
                 setRoles(roleOptions);
             } else {
@@ -124,42 +141,135 @@ function RegisterPage() {
     }
 
     const checkUsernameAvailability = async (username) => {
-        if (!username.trim()) return; // Skip empty username
+        if (!username.trim()) {
+            setUsernameStatus({ valid: null, message: "" });
+            return;
+        } // Skip empty username
 
         const url = `http://localhost:9000/account/check-username?username=${encodeURIComponent(username)}`;
         try {
             const response = await fetch(url);
             if (response.ok) {
                 const data = await response.json();
-                console.log(`Username "${username}" availability:`, data.available);
+                if (!data.response) {
+                    setUsernameStatus({
+                        valid: true,
+                        message: "✅ Username hợp lệ",
+                    });
+                } else {
+                    setUsernameStatus({
+                        valid: false,
+                        message: "❌ Username đã tồn tại",
+                    });
+                }
+                console.log(`Username "${username}" availability:`, data.response);
             }
         } catch (error) {
-            console.error('Error checking username availability:', error);
-        }   
+            setUsernameStatus({
+                valid: false,
+                message: "Không thể kiểm tra username",
+            });
+        }
+    };
+
+    const checkEmailAvailability = async (email) => {
+        if (!email.trim()) {
+            setEmailStatus({ valid: null, message: "" });
+            return;
+        }
+        const url = `http://localhost:9000/account/check-email?email=${encodeURIComponent(email)}`;
+        try {
+            const response = await fetch(url);
+            if (response.ok) {
+                const data = await response.json();
+                if (!data.response) {
+                    setEmailStatus({
+                        valid: true,
+                        message: "✅ Email hợp lệ",
+                    });
+                }
+                else {
+                    setEmailStatus({
+                        valid: false,
+                        message: "❌ Email đã tồn tại",
+                    });
+                }
+                console.log(`Email "${email}" availability:`, data.response);
+            }
+        } catch (error) {
+            setEmailStatus({
+                valid: false,
+                message: "Không thể kiểm tra email",
+            });
+        }
+    };
+
+    const validateConfirmPassword = (confirmPassword) => {
+        if (!confirmPassword) {
+            setConfirmPassError({ valid: null, message: "" });
+            return;
+        }
+        if (confirmPassword !== form.password) {
+            setConfirmPassError({
+                valid: false,
+                message: "❌ Mật khẩu xác nhận không khớp",
+            });
+        } else {
+            setConfirmPassError({
+                valid: true,
+                message: "✅ Mật khẩu xác nhận hợp lệ",
+            });
+        }
+    };
+    // ─── Validation ───────────────────────────────────────────────────────────────
+    const validate = ({ field }) => {
+        switch (field) {
+            case "username":
+                if (!form.username.trim()) setUsernameStatus({ valid: false, message: "Username không được để trống" });
+                else if (form.username.trim().length < 3) setUsernameStatus({ valid: false, message: "Tối thiểu 3 ký tự!" });
+                else if (form.username.trim().length > 20) setUsernameStatus({ valid: false, message: "Tối đa 20 ký tự!" });
+                else checkUsernameAvailability(form.username);
+                break;
+            case "email":
+                if (!form.email.trim()) setEmailStatus({ valid: false, message: "Email không được để trống" });
+                else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) setEmailStatus({ valid: false, message: "Email không đúng định dạng!" });
+                else checkEmailAvailability(form.email);
+                break;
+            case "password":
+                if (!form.password) setPasswordStatus({ valid: false, message: "Password không được để trống" });
+                else if (form.password.length < 8) setPasswordStatus({ valid: false, message: "Tối thiểu 8 ký tự!" });
+                else if (form.password.length > 20) setPasswordStatus({ valid: false, message: "Tối đa 20 ký tự!" });
+                else setPasswordStatus({ valid: true, message: "✅ Password hợp lệ" });
+                break;
+            // Add more cases for other fields as needed
+        }
     };
 
     useEffect(() => {
         loadRoles();
-    },  []);
+    }, []);
 
     useEffect(() => {
-        const delayDebounce = setTimeout(() => {
-            checkUsernameAvailability(username);
-        }, 500); // Delay to avoid too many requests while typing
-        return () => clearTimeout(delayDebounce);
-    }, [username]);
+        if (touched.username) {
+            validate({ field: "username" });
+        }
+    }, [form.username, touched.username]);
 
-    const [form, setForm] = useState({
-        username: "",
-        email: "",
-        password: "",
-        roles: new Set(),
-    });
+    useEffect(() => {
+        if (touched.email) {
+            validate({ field: "email" });
+        }
+    }, [form.email, touched.email]);
 
-    const [errors, setErrors] = useState({});
-    const [showPass, setShowPass] = useState(false);
-    const [agreed, setAgreed] = useState(false);
-    const [submitted, setSubmitted] = useState(false);
+    useEffect(() => {
+        if (touched.password) {
+            validate({ field: "password" });
+        }
+    }, [form.password, touched.password]);
+
+    useEffect(() => {
+        validateConfirmPassword(form.confirmPassword);
+    }, [form.confirmPassword, form.password]);
 
     const set = (field) => (e) =>
         setForm((prev) => ({ ...prev, [field]: e.target.value }));
@@ -242,46 +352,92 @@ function RegisterPage() {
                     </p>
 
                     {/* Username */}
-                    <Field label="Username" error={errors.username}>
+                    <Field label="Username">
                         <input
                             type="text"
                             value={form.username}
                             onChange={set("username")}
                             placeholder="Tối thiểu 3, tối đa 20 ký tự"
-                            className={`w-full h-12 rounded-xl px-3.5 text-sm text-gray-700 outline-none
-                          transition-all focus:ring-2 focus:ring-blue-700
-                          ${errors.username
-                                    ? "bg-red-50 border border-red-400"
-                                    : "bg-[#eaeaec] border border-transparent"}`}
+                            onBlur={() =>
+                                setTouched(prev => ({
+                                    ...prev,
+                                    username: true
+                                }))
+                            }
+                            className={`w-full h-12 rounded-xl px-3.5 text-sm outline-none transition-all focus:ring-2
+                                ${usernameStatus.valid === true
+                                    ? "bg-green-50 border border-green-500 focus:ring-green-500"
+                                    : usernameStatus.valid === false
+                                        ? "bg-red-50 border border-red-500 focus:ring-red-500"
+                                        : "bg-[#eaeaec] border border-transparent focus:ring-blue-700"
+                                }`}
+                            required
                         />
+                        {usernameStatus.message && (
+                            <p
+                                className={`mt-1 text-sm ${usernameStatus.valid
+                                    ? "text-green-600"
+                                    : "text-red-600"
+                                    }`}
+                            >
+                                {usernameStatus.message}
+                            </p>
+                        )}
                     </Field>
 
                     {/* Email */}
-                    <Field label="E-mail" error={errors.email}>
+                    <Field label="E-mail">
                         <input
                             type="email"
                             value={form.email}
                             onChange={set("email")}
                             placeholder="yourname@email.com"
+                            onBlur={() =>
+                                setTouched(prev => ({
+                                    ...prev,
+                                    email: true
+                                }))
+                            }
                             className={`w-full h-12 rounded-xl px-3.5 text-sm text-gray-700 outline-none
                           transition-all focus:ring-2 focus:ring-blue-700
-                          ${errors.email
-                                    ? "bg-red-50 border border-red-400"
-                                    : "bg-[#eaeaec] border border-transparent"}`}
+                            ${emailStatus.valid === true
+                                    ? "bg-green-50 border border-green-500 focus:ring-green-500"
+                                    : emailStatus.valid === false
+                                        ? "bg-red-50 border border-red-500 focus:ring-red-500"
+                                        : "bg-[#eaeaec] border border-transparent focus:ring-blue-700"
+                                }`}
                         />
+                        {emailStatus.message && (
+                            <p
+                                className={`mt-1 text-sm ${emailStatus.valid
+                                    ? "text-green-600"
+                                    : "text-red-600"
+                                    }`}
+                            >
+                                {emailStatus.message}
+                            </p>
+                        )}
                     </Field>
 
                     {/* Password */}
-                    <Field label="Password" error={errors.password}>
+                    <Field label="Password" >
                         <div className="relative">
                             <input
                                 type={showPass ? "text" : "password"}
                                 value={form.password}
                                 onChange={set("password")}
                                 placeholder="8–20 ký tự"
+                                onBlur={() =>
+                                    setTouched(prev => ({
+                                        ...prev,
+                                        password: true
+                                    }))
+                                }
                                 className={`w-full h-12 rounded-xl px-3.5 pr-11 text-sm text-gray-700
                             outline-none transition-all focus:ring-2 focus:ring-blue-700
-                            ${errors.password
+                            ${passwordStatus.valid === true
+                                        ? "bg-green-50 border border-green-500 focus:ring-green-500"
+                                        : passwordStatus.valid === false
                                         ? "bg-red-50 border border-red-400"
                                         : "bg-[#eaeaec] border border-transparent"}`}
                             />
@@ -294,31 +450,50 @@ function RegisterPage() {
                                 <EyeIcon open={showPass} />
                             </button>
                         </div>
+                        {passwordStatus.message && (
+                            <p
+                                className={`mt-1 text-sm ${passwordStatus.valid
+                                    ? "text-green-600"
+                                    : "text-red-600"}`}>
+                                {passwordStatus.message}
+                            </p>
+                        )}
                     </Field>
 
-                    {/* Roles */}
-                    <Field label="Vai trò" error={errors.roles}>
-                        <div className="grid grid-cols-2 gap-2">
-                            {roles.map((r) => {
-                                const active = form.roles.has(r.value);
-                                return (
-                                    <button
-                                        key={r.value}
-                                        type="button"
-                                        onClick={() => toggleRole(r.value)}
-                                        className={`flex items-center gap-2 h-11 px-4 rounded-xl text-[13px]
-                                font-medium border transition-all active:scale-[0.97]
-                                ${active
-                                                ? "bg-blue-800 text-white border-blue-800"
-                                                : "bg-[#eaeaec] text-gray-500 border-transparent hover:bg-gray-200"}`}>
-                                        <span className="text-base">{r.icon}</span>
-                                        {r.label}
-                                    </button>
-                                );
-                            })}
+                    {/* Confirm Password */}
+                    <Field label="Xác nhận mật khẩu">
+                        <div className="relative">
+                            <input
+                                type={showConfirmPass ? "text" : "password"}
+                                value={form.confirmPassword}
+                                onChange={set("confirmPassword")}
+                                placeholder="8–20 ký tự"
+                                className={`w-full h-12 rounded-xl px-3.5 pr-11 text-sm text-gray-700
+                            outline-none transition-all focus:ring-2 focus:ring-blue-700
+                            ${confirmPassError.valid === false
+                                        ? "bg-red-50 border border-red-400"
+                                        : confirmPassError.valid === true
+                                            ? "bg-green-50 border border-green-500 focus:ring-green-500"
+                                            : "bg-[#eaeaec] border border-transparent"}`}
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowConfirmPass((v) => !v)}
+                                aria-label="toggle password"
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400
+                           hover:text-gray-600 transition-colors">
+                                <EyeIcon open={showConfirmPass} />
+                            </button>
                         </div>
+                        {confirmPassError.message && (
+                            <p
+                                className={`mt-1 text-sm ${confirmPassError.valid
+                                    ? "text-green-600"
+                                    : "text-red-600"}`}>
+                                {confirmPassError.message}
+                            </p>
+                        )}
                     </Field>
-
                     {/* Terms */}
                     <div className="mb-5">
                         <div
@@ -338,8 +513,10 @@ function RegisterPage() {
                                 Tôi đồng ý với điều khoản dịch vụ
                             </span>
                         </div>
-                        {errors.agreed && (
-                            <p className="text-xs text-red-500 mt-1.5">{errors.agreed}</p>
+                        {agreed === false && (
+                            <p className="text-xs text-red-500 mt-1.5">
+                                Vui lòng đồng ý điều khoản!
+                            </p>
                         )}
                     </div>
 
@@ -355,7 +532,7 @@ function RegisterPage() {
                     {/* Sign in link */}
                     <p className="text-center mt-5 text-[13px] text-gray-400">
                         Already a member?{" "}
-                        <a href="#" className="text-blue-800 font-medium hover:underline">
+                        <a href="/login" className="text-blue-800 font-medium hover:underline">
                             Sign in
                         </a>
                     </p>
