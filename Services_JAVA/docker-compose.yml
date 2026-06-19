@@ -1,5 +1,4 @@
 services:
-
   mongodb:
     image: mongodb/mongodb-community-server:latest
     container_name: mongodb
@@ -8,6 +7,19 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: authentication_service
       MONGO_INITDB_ROOT_PASSWORD: mongo123
+  mysql-db:
+    image: mysql:8.0
+    container_name: mysql_server
+    environment:
+      MYSQL_ROOT_PASSWORD: customer_service
+      MYSQL_DATABASE: customer_service
+      MYSQL_USER: customer_service
+      MYSQL_PASSWORD: customer_service
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
   redis:
     image: redis/redis-stack:latest
@@ -61,3 +73,4 @@ services:
 volumes:
   mongodb:
   redis-data:
+  mysql_data:
