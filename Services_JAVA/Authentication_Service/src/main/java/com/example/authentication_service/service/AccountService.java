@@ -8,6 +8,7 @@ import com.example.authentication_service.exception.UserAlreadyExistsException;
 import com.example.authentication_service.jwt.JwtUtils;
 import com.example.authentication_service.mapper.AccountMapper;
 import com.example.authentication_service.models.Account;
+import com.example.authentication_service.models.StatusAccount;
 import com.example.authentication_service.models.dto.request.AccountSignIn;
 import com.example.authentication_service.models.dto.request.AccountSignUp;
 import com.example.authentication_service.models.dto.response.SignInResponse;
@@ -60,7 +61,8 @@ public class AccountService {
             throw new UserAlreadyExistsException("Email is already in use!");
         }
         Account account = accountMapper.toAccountFromSignUp(accountSignUp);
-        account.setEnabled(true);
+        account.setActive(true);
+        account.setStatusAccount(StatusAccount.Active);
         account.setPassword(passwordEncoder.encode(accountSignUp.getPassword()));
         account.setRoles(roleFactory.determineRoles(accountSignUp.getRoles()));
 

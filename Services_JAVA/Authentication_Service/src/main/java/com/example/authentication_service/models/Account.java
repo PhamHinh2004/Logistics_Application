@@ -21,7 +21,9 @@ public class Account {
     private String password;
     @Indexed(unique = true)
     private String email;
-    private boolean enabled;
+    private boolean isActive;
+    private String phone;
+    private StatusAccount statusAccount;
     @DBRef
     private Set<Role> roles;
 }
