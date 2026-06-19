@@ -1,0 +1,21 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://authentication_service:mongo123@localhost:27017/authentication_service?authSource=admin
+
+    redis:
+      host: localhost
+      port: 6379
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8061/eureka
+
+
+server:
+  port: 9000
+
+app:
+  jwtSecret: aEgC6orb0GXD2sQwg2Vn3aTiVqmDMUtset7wi8mFJcY
+  jwtExpirationMs: 86400000
