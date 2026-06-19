@@ -46,7 +46,7 @@ public class UserDetailsImpl implements UserDetails {
                 account.getEmail(),
                 account.getPassword(),
                 authorities,
-                account.isEnabled());
+                account.isActive());
     }
 
     @Override

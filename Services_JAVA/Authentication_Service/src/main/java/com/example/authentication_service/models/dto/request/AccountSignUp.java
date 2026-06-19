@@ -1,5 +1,6 @@
 package com.example.authentication_service.models.dto.request;
 
+import com.example.authentication_service.models.StatusAccount;
 import com.mongodb.lang.Nullable;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -17,8 +18,8 @@ import java.util.Set;
 @EqualsAndHashCode
 public class AccountSignUp {
     @NotBlank(message = "Username is required!")
-    @Size(min= 3, message = "Username must have atleast 3 characters!")
-    @Size(max= 20, message = "Username can have have atmost 20 characters!")
+    @Size(min = 3, message = "Username must have atleast 3 characters!")
+    @Size(max = 20, message = "Username can have have atmost 20 characters!")
     private String username;
 
     @Email(message = "Email is not in valid format!")
@@ -32,4 +33,7 @@ public class AccountSignUp {
 
     @Nullable
     private Set<String> roles;
+
+    @NotBlank(message = "Phone number is required!")
+    private String phone;
 }
