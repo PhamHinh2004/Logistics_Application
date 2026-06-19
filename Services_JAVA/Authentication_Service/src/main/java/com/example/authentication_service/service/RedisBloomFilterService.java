@@ -50,12 +50,18 @@ public class RedisBloomFilterService {
     }
 
     public void addAllUsernames(List<String> list) {
+        if (list == null || list.isEmpty()) {
+            return;
+        }
         String[] arr = list.stream().map(String::toLowerCase).toArray(String[]::new);
         bloomClient.addMulti(USERNAME_FILTER, arr);
     }
 
 
     public void addAllEmails(List<String> list) {
+        if (list == null || list.isEmpty()) {
+            return;
+        }
         String[] arr = list.stream().map(String::toLowerCase).toArray(String[]::new);
         bloomClient.addMulti(EMAIL_FILTER, arr);
     }
