@@ -1,19 +1,20 @@
 spring:
   cloud:
     gateway:
-      discovery:
-        locator:
-          enabled: true
-      routes:
-        - id: authentication-service
-          uri: lb://authentication-service
-          predicates:
-            - Path=/api/authentication/**
-        - id: customer-service
-          uri: lb://customer-service
-          predicates:
-            - Path=/api/customer/**
-
+      mvc:
+        routes:
+          - id: auth-service
+            uri: lb://AUTHENTICATION-SERVICE
+            predicates:
+              - Path=/account/**
+          - id: role-service
+            uri: lb://AUTHENTICATION-SERVICE
+            predicates:
+              - Path=/api/roles/**
+          - id: customer-service
+            uri: lb://CUSTOMER-SERVICE
+            predicates:
+              - Path=/api/v1/customers/**
 eureka:
   client:
     service-url:
@@ -21,3 +22,7 @@ eureka:
 
 server:
   port: 8060
+
+app:
+  jwtSecret: aEgC6orb0GXD2sQwg2Vn3aTiVqmDMUtset7wi8mFJcY
+  jwtExpirationMs: 86400000
