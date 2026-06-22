@@ -2,10 +2,4 @@ spring:
   application:
     name: discovery-service
   config:
-    import: "configserver:http://localhost:8088"
----
-spring:
-  config:
-    activate:
-      on-profile: docker
-    import: "configserver:http://config-service:8088"
+    import: "configserver:${CONFIG_SERVER_URL:http://localhost:8088}"

@@ -48,6 +48,7 @@ services:
       - "8061:8061"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+      - CONFIG_SERVER_URL=http://config-service:8088
     depends_on:
       config-service:
         condition: service_healthy
@@ -60,6 +61,7 @@ services:
       - "9000:9000"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+      - CONFIG_SERVER_URL=http://config-service:8088
     depends_on:
       config-service:
         condition: service_healthy
@@ -70,6 +72,37 @@ services:
       redis:
         condition: service_started
 
+  customer-service:
+    build:
+      context: ./Customer_Service
+    container_name: customer-service
+    ports:
+      - "9001:9001"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - CONFIG_SERVER_URL=http://config-service:8088
+    depends_on:
+      config-service:
+        condition: service_healthy
+      discovery-service:
+        condition: service_started
+      mysql-db:
+        condition: service_started
+
+  api-gateway-service:
+    build:
+      context: ./ApiGateway_Service
+    container_name: api-gateway-service
+    ports:
+      - "8060:8060"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - CONFIG_SERVER_URL=http://config-service:8088
+    depends_on:
+      config-service:
+        condition: service_healthy
+      discovery-service:
+        condition: service_started
 volumes:
   mongodb:
   redis-data:
