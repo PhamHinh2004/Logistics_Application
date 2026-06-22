@@ -97,6 +97,9 @@ public class AccountService {
                     .id(details.getId())
                     .roles(roles)
                     .token(jwt)
+                    .isActive(details.isActive())
+                    .phone(details.getPhone())
+                    .statusAccount(details.getStatusAccount())
                     .type("Bearer")
                     .build();
             return ResponseEntity.ok(signInResponse);
