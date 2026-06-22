@@ -1,0 +1,28 @@
+spring:
+  cloud:
+    gateway:
+      mvc:
+        routes:
+          - id: auth-service
+            uri: lb://AUTHENTICATION-SERVICE
+            predicates:
+              - Path=/account/**
+          - id: role-service
+            uri: lb://AUTHENTICATION-SERVICE
+            predicates:
+              - Path=/api/roles/**
+          - id: customer-service
+            uri: lb://CUSTOMER-SERVICE
+            predicates:
+              - Path=/api/v1/customers/**
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8061/eureka
+
+server:
+  port: 8060
+
+app:
+  jwtSecret: aEgC6orb0GXD2sQwg2Vn3aTiVqmDMUtset7wi8mFJcY
+  jwtExpirationMs: 86400000
