@@ -1,6 +1,7 @@
 package com.example.authentication_service.userdetails;
 
 import com.example.authentication_service.models.Account;
+import com.example.authentication_service.models.StatusAccount;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,21 +33,25 @@ public class UserDetailsImpl implements UserDetails {
 
     private Collection<? extends GrantedAuthority> authorities;
 
-    private boolean enabled;
-
+    private boolean isActive;
+    private String phone;
+    private StatusAccount statusAccount;
 
     public static UserDetailsImpl build(Account account) {
         List<GrantedAuthority> authorities = account.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName()))
                 .collect(Collectors.toList());
 
-        return new UserDetailsImpl(
-                account.getId(),
-                account.getUsername(),
-                account.getEmail(),
-                account.getPassword(),
-                authorities,
-                account.isActive());
+        return UserDetailsImpl.builder()
+                .id(account.getId())
+                .username(account.getUsername())
+                .email(account.getEmail())
+                .password(account.getPassword())
+                .authorities(authorities)
+                .isActive(account.isActive())
+                .phone(account.getPhone())
+                .statusAccount(account.getStatusAccount())
+                .build();
     }
 
     @Override
