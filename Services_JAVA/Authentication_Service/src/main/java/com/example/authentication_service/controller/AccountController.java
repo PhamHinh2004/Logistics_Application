@@ -29,6 +29,15 @@ public class AccountController {
         return accountService.signIn(accountSignIn);
     }
 
+    @PostMapping("/auth/refresh-token")
+    public ResponseEntity<?> refreshToken(@RequestBody java.util.Map<String, String> request) {
+        String refreshToken = request.get("refreshToken");
+        if (refreshToken == null || refreshToken.isEmpty()) {
+            return ResponseEntity.badRequest().body("Refresh token is required");
+        }
+        return accountService.refreshToken(refreshToken);
+    }
+
     @GetMapping("/check-username")
     public ResponseEntity<ApiResponseDto<Boolean>> checkUsername(@RequestParam("username") String username){
         return ResponseEntity.ok(new ApiResponseDto<>("Check username", "success", accountService.checkExistUsername(username)));

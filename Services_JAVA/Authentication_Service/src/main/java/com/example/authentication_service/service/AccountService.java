@@ -11,8 +11,11 @@ import com.example.authentication_service.models.Account;
 import com.example.authentication_service.models.StatusAccount;
 import com.example.authentication_service.models.dto.request.AccountSignIn;
 import com.example.authentication_service.models.dto.request.AccountSignUp;
+import com.example.authentication_service.models.RefreshToken;
 import com.example.authentication_service.models.dto.response.SignInResponse;
 import com.example.authentication_service.repository.AccountRepository;
+import com.example.authentication_service.repository.RefreshTokenRepository;
+import com.example.authentication_service.service.RefreshTokenService;
 import com.example.authentication_service.userdetails.UserDetailsImpl;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +41,8 @@ public class AccountService {
     private final AuthenticationManager authenticationManager;
     private final JwtUtils  jwtUtils;
     private final RedisBloomFilterService redisBloomFilterService;
+    private final RefreshTokenService refreshTokenService;
+    private final RefreshTokenRepository refreshTokenRepository;
 
 
     public Account findByUsername(String username) {
@@ -64,7 +69,7 @@ public class AccountService {
         account.setActive(true);
         account.setStatusAccount(StatusAccount.Active);
         account.setPassword(passwordEncoder.encode(accountSignUp.getPassword()));
-        account.setRoles(roleFactory.determineRoles(accountSignUp.getRoles()));
+        account.setRole(roleFactory.getInstance(accountSignUp.getRole() != null ? accountSignUp.getRole() : "user"));
 
         accountRepository.save(account);
         redisBloomFilterService.addUsername(accountSignUp.getUsername());
@@ -90,6 +95,10 @@ public class AccountService {
             List<String> roles = details.getAuthorities().stream()
                     .map(item -> item.getAuthority())
                     .toList();
+            
+            // Generate Refresh Token
+            RefreshToken refreshToken = refreshTokenService.createRefreshToken(details.getId());
+
             //
             SignInResponse signInResponse = SignInResponse.builder()
                     .username(details.getUsername())
@@ -97,6 +106,7 @@ public class AccountService {
                     .id(details.getId())
                     .roles(roles)
                     .token(jwt)
+                    .refreshToken(refreshToken.getToken())
                     .isActive(details.isActive())
                     .phone(details.getPhone())
                     .statusAccount(details.getStatusAccount())
@@ -106,6 +116,22 @@ public class AccountService {
         }catch (Exception e) {
             throw new AppException(ErrorCode.INVALID_PASSWORD);
         }
+    }
+
+    public ResponseEntity<?> refreshToken(String requestRefreshToken) {
+        return refreshTokenRepository.findByToken(requestRefreshToken)
+                .map(refreshTokenService::verifyExpiration)
+                .map(RefreshToken::getAccount)
+                .map(account -> {
+                    String token = jwtUtils.generateJwtTokenFromEmail(account.getEmail());
+                    RefreshToken newRefreshToken = refreshTokenService.createRefreshToken(account.getId());
+                    
+                    java.util.Map<String, String> response = new java.util.HashMap<>();
+                    response.put("accessToken", token);
+                    response.put("refreshToken", newRefreshToken.getToken());
+                    return ResponseEntity.ok(response);
+                })
+                .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
     }
 
     @PostConstruct

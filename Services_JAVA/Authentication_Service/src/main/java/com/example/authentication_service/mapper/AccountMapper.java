@@ -9,6 +9,6 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface AccountMapper {
     AccountResponse toAccountResponse(Account account);
-    @Mapping(target = "roles", ignore = true)
+    @Mapping(target = "role", ignore = true)
     Account toAccountFromSignUp(AccountSignUp accountSignUp);
 }

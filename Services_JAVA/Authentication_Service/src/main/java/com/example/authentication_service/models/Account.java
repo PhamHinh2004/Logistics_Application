@@ -6,8 +6,6 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Set;
-
 @Document(collection = "accounts")
 @Data
 @AllArgsConstructor
@@ -24,6 +22,8 @@ public class Account {
     private boolean isActive;
     private String phone;
     private StatusAccount statusAccount;
+    private String provider;    // "google", "github", hoặc "local"
+    private String providerId;  // ID từ provider
     @DBRef
-    private Set<Role> roles;
+    private Role role;
 }

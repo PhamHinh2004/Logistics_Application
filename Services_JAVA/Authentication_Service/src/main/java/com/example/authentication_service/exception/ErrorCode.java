@@ -8,6 +8,7 @@ public enum ErrorCode {
     NOT_FOUND(102, "Account not found", HttpStatus.NOT_FOUND),
     INVALID_PASSWORD(103, "Invalid password", HttpStatus.BAD_REQUEST),
     CANNOT_LOAD_DATA(104, "Cannot load data", HttpStatus.BAD_REQUEST),
+    REFRESH_TOKEN_EXPIRED(105, "Refresh token has expired", HttpStatus.UNAUTHORIZED),
     ;
     private int code;
     private String message;
