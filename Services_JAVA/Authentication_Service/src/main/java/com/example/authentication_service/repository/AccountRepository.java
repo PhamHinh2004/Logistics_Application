@@ -16,4 +16,5 @@ public interface AccountRepository extends MongoRepository<Account, String> {
     // Chỉ lấy username + email, không kéo toàn bộ document
     @Query(value = "{}", fields = "{ username: 1, email: 1, _id: 0 }")
     List<Account> findAllProjectedBy();
+    Account findByEmail(String email);
 }

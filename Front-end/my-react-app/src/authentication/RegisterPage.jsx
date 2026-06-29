@@ -94,7 +94,7 @@ function RegisterPage() {
         email: "",
         password: "",
         confirmPassword: "",
-        roles: new Set(),
+        role: "user",
     });
     const [showConfirmPass, setShowConfirmPass] = useState(false);
     const [confirmPassError, setConfirmPassError] = useState({
@@ -293,7 +293,7 @@ function RegisterPage() {
             username: form.username.trim(),
             email: form.email.trim(),
             password: form.password,
-            roles: form.roles.size > 0 ? [...form.roles] : null,
+            role: form.role || "user",
         };
         console.log("POST /api/auth/signup →", payload);
         setSubmitted(true);
