@@ -30,7 +30,6 @@ public class RoleDataSeeder {
                                 .name(item.name())
                                 .roleOptions(item)
                                 .description(""+item.name())
-                                .permissions(null)
                                 .build()
                 );
             }

@@ -116,8 +116,8 @@ function LoginPage() {
     checkUsernameAvailability(form.username);
   }, [form.username]);
 
-  
-    
+
+
 
   const set = (field) => (e) =>
     setForm((prev) => ({ ...prev, [field]: e.target.value }));
@@ -129,8 +129,8 @@ function LoginPage() {
     setApiError("");
     setExitedUsername({ valid: null, message: "" });
     setExistedPassword({ valid: null, message: "" });
-    
-    const url  = "http://localhost:9000/account/auth/login";
+
+    const url = "http://localhost:9000/account/auth/login";
     try {
       const response = await fetch(url, {
         method: "POST",
@@ -150,7 +150,7 @@ function LoginPage() {
   };
 
   const handleSubmit = async () => {
-    if(form.password.trim() === ""){
+    if (form.password.trim() === "") {
       setExistedPassword({ valid: false, message: "Vui lòng nhập password" });
       return;
     }
@@ -218,9 +218,8 @@ function LoginPage() {
                   : "bg-[#eaeaec] border border-transparent"}`}
             />
             {exitedusername.message && (
-              <p className={`text-xs mt-1.5 ${
-                exitedusername.valid === false ? "text-red-500" : "text-green-500"
-              }`}>
+              <p className={`text-xs mt-1.5 ${exitedusername.valid === false ? "text-red-500" : "text-green-500"
+                }`}>
                 {exitedusername.message}
               </p>
             )}
@@ -303,7 +302,8 @@ function LoginPage() {
 
           {/* Social login */}
           <div className="grid grid-cols-2 gap-3">
-            <button className="flex items-center justify-center gap-2.5 h-11 rounded-xl
+            <button onClick={() => window.location.href = "http://localhost:9000/oauth2/authorization/google"}
+              className="flex items-center justify-center gap-2.5 h-11 rounded-xl
                                bg-[#eaeaec] hover:bg-gray-200 transition-colors text-[13px]
                                text-gray-600 font-medium border border-transparent
                                hover:border-gray-300">
@@ -324,7 +324,8 @@ function LoginPage() {
               Google
             </button>
 
-            <button className="flex items-center justify-center gap-2.5 h-11 rounded-xl
+            <button onClick={() => window.location.href = "http://localhost:9000/oauth2/authorization/github"}
+              className="flex items-center justify-center gap-2.5 h-11 rounded-xl
                                bg-[#eaeaec] hover:bg-gray-200 transition-colors text-[13px]
                                text-gray-600 font-medium border border-transparent
                                hover:border-gray-300">

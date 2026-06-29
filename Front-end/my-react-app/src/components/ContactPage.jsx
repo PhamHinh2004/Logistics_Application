@@ -1,29 +1,31 @@
 import { useState } from "react";
 import Navigation from "./Navigation";
+import FooterPage from "./FooterPage";
+
 const C = {
-  green:   "#3a4f38",
+  green: "#3a4f38",
   greenMd: "#4d6649",
   greenLt: "#eaf0e5",
-  white:   "#ffffff",
-  offWhite:"#f4f6f1",
-  text:    "var(--color-text-primary)",
-  muted:   "var(--color-text-secondary)",
-  border:  "var(--color-border-tertiary)",
-  borderMd:"var(--color-border-secondary)",
+  white: "#ffffff",
+  offWhite: "#f4f6f1",
+  text: "var(--color-text-primary)",
+  muted: "var(--color-text-secondary)",
+  border: "var(--color-border-tertiary)",
+  borderMd: "var(--color-border-secondary)",
 };
 
 const NAV_LINKS = ["How it works", "About us", "News", "Shipping"];
 
 const INFO_CARDS = [
-  { icon: "📞", label: "Phone",  value: "+1 (800) 926-3264\nMon–Fri, 8am–6pm" },
-  { icon: "✉️", label: "Email",  value: "hello@oceanwings.com\nWe reply within 24h" },
-  { icon: "📍", label: "Office", value: "128 Harbor Blvd\nSan Francisco, CA" },
+  { icon: "📞", label: "Phone", value: "0969880914\nMon–Fri, 8am–6pm" },
+  { icon: "✉️", label: "Email", value: "devpoor44@gmail.com\nWe reply within 24h" },
+  { icon: "📍", label: "Office", value: "Ho Chi Minh City, Vietnam" },
 ];
 
 const CONTACT_ITEMS = [
-  { icon: "📞", title: "+1 (800) 926-3264",       sub: "Available Monday to Friday\n8:00 AM – 6:00 PM PST" },
-  { icon: "✉️", title: "hello@oceanwings.com",    sub: "Send us an email anytime.\nWe reply within one business day." },
-  { icon: "📍", title: "128 Harbor Blvd, SF",     sub: "San Francisco, CA 94105\nUnited States" },
+  { icon: "📞", title: "0969880914", sub: "Available Monday to Friday\n8:00 AM – 6:00 PM PST" },
+  { icon: "✉️", title: "devpoor44@gmail.com", sub: "Send us an email anytime.\nWe reply within one business day." },
+  { icon: "📍", title: "Ho Chi Minh City, Vietnam", sub: "Ho Chi Minh City, Vietnam" },
 ];
 
 const TOPICS = ["General inquiry", "Get a quote", "Track shipment", "Partnership", "Other"];
@@ -172,14 +174,14 @@ export default function ContactPage() {
 
           {/* Name row */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "16px" }}>
-            <Field label="First name" name="firstName" placeholder="John"    value={form.firstName} onChange={handleChange} />
-            <Field label="Last name"  name="lastName"  placeholder="Smith"   value={form.lastName}  onChange={handleChange} />
+            <Field label="First name" name="firstName" placeholder="John" value={form.firstName} onChange={handleChange} />
+            <Field label="Last name" name="lastName" placeholder="Smith" value={form.lastName} onChange={handleChange} />
           </div>
 
           {/* Email + Phone */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "16px" }}>
-            <Field label="Email"            name="email"   type="email" placeholder="john@company.com"   value={form.email}   onChange={handleChange} />
-            <Field label="Phone (optional)" name="phone"   type="tel"   placeholder="+1 (555) 000-0000"  value={form.phone}   onChange={handleChange} />
+            <Field label="Email" name="email" type="email" placeholder="john@company.com" value={form.email} onChange={handleChange} />
+            <Field label="Phone (optional)" name="phone" type="tel" placeholder="+1 (555) 000-0000" value={form.phone} onChange={handleChange} />
           </div>
 
           {/* Company */}
@@ -228,18 +230,18 @@ export default function ContactPage() {
       </div>
 
       {/* ── Map strip ── */}
-      <div style={{
-        backgroundColor: C.greenLt,
-        borderTop: `0.5px solid ${C.border}`,
-        height: "120px",
-        display: "flex", alignItems: "center", justifyContent: "center", gap: "12px",
-      }}>
-        <span style={{ fontSize: "26px" }}>🗺️</span>
-        <span style={{ fontSize: "14px", fontWeight: 500, color: C.green }}>
-          128 Harbor Blvd, San Francisco, CA 94105 —{" "}
-          <a href="#" style={{ color: C.greenMd, textDecoration: "none" }}>Open in Maps</a>
-        </span>
+      <div style={{ width: "100%", height: "450px", overflow: "hidden" }} >
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15669.304344510247!2d106.94766635!3d10.93872195!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3174e0d39a5cc479%3A0x14ea83a0ee43da91!2zTmjDoCBUaOG7nSBHacOhbyBY4bupIFBow7ogU8ahbg!5e0!3m2!1svi!2s!4v1782387752750!5m2!1svi!2s"
+            width="100%"
+            height="450"
+            style={{ border: 0 , padding: "10px", margin: "0px"}}
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="strict-origin-when-cross-origin">
+          </iframe>
       </div>
+      {/* ── Footer ── */}
+      <FooterPage />
     </div>
   );
 }
