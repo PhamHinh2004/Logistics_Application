@@ -32,8 +32,10 @@ public class AccountSignUp {
     private String password;
 
     @Nullable
-    private Set<String> roles;
+    private String role;
 
     @NotBlank(message = "Phone number is required!")
     private String phone;
+    private String provider;    // "google", "github", hoặc "local"
+    private String providerId;  // ID từ provider
 }

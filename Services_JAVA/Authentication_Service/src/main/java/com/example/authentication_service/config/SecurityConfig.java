@@ -1,6 +1,8 @@
 package com.example.authentication_service.config;
 import com.example.authentication_service.jwt.AuthEntryPoint;
 import com.example.authentication_service.jwt.AuthTokenFilter;
+import com.example.authentication_service.oauth2.CustomOAuth2UserService;
+import com.example.authentication_service.oauth2.OAuth2SuccessHandler;
 import com.example.authentication_service.userdetails.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -36,6 +38,10 @@ public class SecurityConfig {
 
     @Autowired
     PasswordEncoder passwordEncoder;
+    @Autowired
+    private CustomOAuth2UserService customOAuth2UserService;
+    @Autowired
+    private OAuth2SuccessHandler oAuth2SuccessHandler;
 
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
@@ -63,12 +69,18 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPoint))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers("/api/auth/**").permitAll()
-                                .requestMatchers("/account/auth/register", "/account/auth/login", "/account/check-email/**", "/account/check-username/**").permitAll()
+                                .requestMatchers("/account/auth/register", "/account/auth/login", "/account/auth/refresh-token", "/account/check-email/**", "/account/check-username/**").permitAll()
                                 .requestMatchers("/api/roles").permitAll()
                                 .anyRequest().authenticated()
+                )
+                .oauth2Login(oauth2 -> oauth2
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(customOAuth2UserService)
+                        )
+                        .successHandler(oAuth2SuccessHandler)
                 );
 
         http.authenticationProvider(authenticationProvider());

@@ -24,6 +24,4 @@ public class Role {
     private String name;
     private RoleOptions roleOptions;
     private String description;
-    @DBRef
-    private Set<Permission> permissions;
 }

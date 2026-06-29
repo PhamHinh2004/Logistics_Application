@@ -38,9 +38,9 @@ public class UserDetailsImpl implements UserDetails {
     private StatusAccount statusAccount;
 
     public static UserDetailsImpl build(Account account) {
-        List<GrantedAuthority> authorities = account.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
-                .collect(Collectors.toList());
+        List<SimpleGrantedAuthority> authorities = account.getRole() != null ?
+                List.of(new SimpleGrantedAuthority(account.getRole().getName())) :
+                List.of(new SimpleGrantedAuthority("ROLE_USER"));
 
         return UserDetailsImpl.builder()
                 .id(account.getId())
