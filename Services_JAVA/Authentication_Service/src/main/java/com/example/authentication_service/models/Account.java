@@ -24,6 +24,7 @@ public class Account {
     private StatusAccount statusAccount;
     private String provider;    // "google", "github", hoặc "local"
     private String providerId;  // ID từ provider
+    private boolean createCustomer;
     @DBRef
     private Role role;
 }
