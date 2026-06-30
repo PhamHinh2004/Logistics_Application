@@ -30,10 +30,8 @@ public class AccountSignUp {
     @Size(min = 8, message = "Password must have atleast 8 characters!")
     @Size(max = 20, message = "Password can have have atmost 20 characters!")
     private String password;
-
     @Nullable
     private String role;
-
     @NotBlank(message = "Phone number is required!")
     private String phone;
     private String provider;    // "google", "github", hoặc "local"

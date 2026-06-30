@@ -1,8 +1,6 @@
 package com.example.authentication_service.oauth2;
 
 import com.example.authentication_service.components.RoleFactory;
-import com.example.authentication_service.exception.AppException;
-import com.example.authentication_service.exception.ErrorCode;
 import com.example.authentication_service.models.Account;
 import com.example.authentication_service.models.StatusAccount;
 import com.example.authentication_service.repository.AccountRepository;
@@ -16,7 +14,9 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +34,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         String providerId = oAuth2User.getName();
         
         // Tạo bản sao có thể chỉnh sửa của attributes
-        java.util.Map<String, Object> attributes = new java.util.HashMap<>(oAuth2User.getAttributes());
+        Map<String, Object> attributes = new HashMap<>(oAuth2User.getAttributes());
         
         String email = (String) attributes.get("email");
         String name = (String) attributes.get("name");
@@ -82,6 +82,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                             .username(name)
                             .isActive(true)
                             .statusAccount(StatusAccount.Active)
+                            .createCustomer(false)
                             .role(roleFactory.getInstance("user")) // Set default role
                             .build()
             );

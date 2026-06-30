@@ -37,15 +37,14 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             throw new AppException(ErrorCode.NOT_FOUND);
         }
 
-        String jwt = jwtUtils.generateJwtTokenFromEmail(email);
+        // Generate JWT where subject is the internal Account ID
+        String jwt = jwtUtils.generateJwtTokenFromId(account.getId());
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(account.getId());
-
+        boolean createdCustomer = account.isCreateCustomer();
+        String id = account.getId();
         // Option A: Redirect về frontend kèm token và refreshToken (SPA)
-        String redirectUrl = "http://localhost:5173/oauth2/redirect?token=" + jwt + "&refreshToken=" + refreshToken.getToken();
+        String redirectUrl = "http://localhost:5173/oauth2/redirect?token=" + jwt + "&refreshToken=" + refreshToken.getToken() + "&createdCustomer=" + createdCustomer +"&id=" + id;
         getRedirectStrategy().sendRedirect(request, response, redirectUrl);
 
-        // Option B: Trả JSON (nếu dùng mobile/API)
-        // response.setContentType("application/json");
-        // response.getWriter().write("{\"token\": \"" + jwt + "\"}");
     }
 }

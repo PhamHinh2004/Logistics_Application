@@ -11,6 +11,7 @@ import com.example.authentication_service.service.AccountService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AccountController {
     private final AccountService accountService;
-    private final AccountMapper accountMapper;
     @PostMapping("/auth/register")
     public ResponseEntity<?> signUp(@RequestBody @Valid AccountSignUp accountSignUp) throws RoleNotFoundException, UserAlreadyExistsException {
         return accountService.signUp(accountSignUp);
@@ -46,5 +46,18 @@ public class AccountController {
     @GetMapping("/check-email")
     public ResponseEntity<?> checkEmail(@RequestParam("email") String email){
         return ResponseEntity.ok(accountService.checkExistEmail(email));
+    }
+
+    @GetMapping
+    public ResponseEntity<ApiResponseDto<AccountResponse>> getAccount(Authentication authentication){
+        return ResponseEntity.ok(new ApiResponseDto<>("Get account", "success", accountService.getAccount(authentication)));
+    }
+    @PatchMapping("/update-createdCustomer")
+    public ResponseEntity<ApiResponseDto<AccountResponse>> updateCreatedCustomer(Authentication authentication){
+        return ResponseEntity.ok(new ApiResponseDto<>("Update created customer", "success", accountService.updateCreatedCustomer(authentication)));
+    }
+    @PatchMapping("/update-role")
+    public ResponseEntity<ApiResponseDto<AccountResponse>> updateRole(Authentication authentication, @RequestParam String role){
+        return ResponseEntity.ok(new ApiResponseDto<>("Update role", "success", accountService.updateRole(authentication, role)));
     }
 }
