@@ -9,16 +9,26 @@ function OAuth2RedirectHandler() {
     // Lấy token từ URL query parameter (?token=...&refreshToken=...)
     const token = searchParams.get("token");
     const refreshToken = searchParams.get("refreshToken");
-
+    const createdCustomer = searchParams.get("createdCustomer");
+    const id = searchParams.get("id");
     if (token) {
       // Lưu token và refreshToken vào localStorage
       localStorage.setItem("token", token);
+      localStorage.setItem("id", id);
+      console.log("Token lưu vào localStorage:", token);
       if (refreshToken) {
         localStorage.setItem("refreshToken", refreshToken);
       }
-      
-      // Chuyển hướng người dùng về trang chủ (Landing Page)
-      navigate("/");
+
+      // // Fetch account info with the obtained token
+      // getAccountInfo(token).catch(err => console.error("Error fetching account info:", err));
+      if (createdCustomer === "false") {
+        navigate("/onboarding");
+      }
+      else {
+        // Chuyển hướng người dùng đến trang chính hoặc trang mong muốn
+        navigate("/");
+      }
     } else {
       // Nếu không có token, quay về trang đăng nhập kèm thông báo lỗi
       navigate("/login?error=oauth2_failed");

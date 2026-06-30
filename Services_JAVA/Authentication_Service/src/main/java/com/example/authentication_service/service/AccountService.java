@@ -12,6 +12,7 @@ import com.example.authentication_service.models.StatusAccount;
 import com.example.authentication_service.models.dto.request.AccountSignIn;
 import com.example.authentication_service.models.dto.request.AccountSignUp;
 import com.example.authentication_service.models.RefreshToken;
+import com.example.authentication_service.models.dto.response.AccountResponse;
 import com.example.authentication_service.models.dto.response.SignInResponse;
 import com.example.authentication_service.repository.AccountRepository;
 import com.example.authentication_service.repository.RefreshTokenRepository;
@@ -25,6 +26,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,18 +46,6 @@ public class AccountService {
     private final RefreshTokenService refreshTokenService;
     private final RefreshTokenRepository refreshTokenRepository;
 
-
-    public Account findByUsername(String username) {
-        return accountRepository.findByUsername(username);
-    }
-
-    public boolean checkPassword(String username, String password) {
-        boolean result = passwordEncoder.matches(password, accountRepository.findByUsername(username).getPassword());
-        if (!result) {
-            throw new AppException(ErrorCode.NOT_FOUND);
-        }
-        return result;
-    }
 
     @Transactional
     public ResponseEntity<?> signUp(AccountSignUp accountSignUp) throws AppException, RoleNotFoundException, UserAlreadyExistsException {
@@ -91,10 +81,8 @@ public class AccountService {
             //4
             UserDetailsImpl details = (UserDetailsImpl) authentication.getPrincipal();
 
-            // 5
-            List<String> roles = details.getAuthorities().stream()
-                    .map(item -> item.getAuthority())
-                    .toList();
+            //5
+            String role = details.getAuthorities().iterator().next().getAuthority();
             
             // Generate Refresh Token
             RefreshToken refreshToken = refreshTokenService.createRefreshToken(details.getId());
@@ -103,14 +91,13 @@ public class AccountService {
             SignInResponse signInResponse = SignInResponse.builder()
                     .username(details.getUsername())
                     .email(details.getEmail())
-                    .id(details.getId())
-                    .roles(roles)
-                    .token(jwt)
-                    .refreshToken(refreshToken.getToken())
                     .isActive(details.isActive())
                     .phone(details.getPhone())
+                    .role(role)
                     .statusAccount(details.getStatusAccount())
-                    .type("Bearer")
+                    .createCustomer(details.getCreateCustomer())
+                    .refreshToken(refreshToken.getToken())
+                    .accessToken(jwt)
                     .build();
             return ResponseEntity.ok(signInResponse);
         }catch (Exception e) {
@@ -123,7 +110,7 @@ public class AccountService {
                 .map(refreshTokenService::verifyExpiration)
                 .map(RefreshToken::getAccount)
                 .map(account -> {
-                    String token = jwtUtils.generateJwtTokenFromEmail(account.getEmail());
+                    String token = jwtUtils.generateJwtTokenFromId(account.getId());
                     RefreshToken newRefreshToken = refreshTokenService.createRefreshToken(account.getId());
                     
                     java.util.Map<String, String> response = new java.util.HashMap<>();
@@ -162,4 +149,23 @@ public class AccountService {
         return redisBloomFilterService.mightExistEmail(email) && accountRepository.existsByEmail(email);
     }
 
+    public AccountResponse getAccount(Authentication authentication) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        Account account = accountRepository.findById(userDetails.getId()).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
+        return accountMapper.toAccountResponse(account);
+    }
+
+    public AccountResponse updateCreatedCustomer(Authentication authentication) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        Account account = accountRepository.findById(userDetails.getId()).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
+        account.setCreateCustomer(true);
+        return accountMapper.toAccountResponse(accountRepository.save(account));
+    }
+
+    public AccountResponse updateRole(Authentication authentication, String role) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        Account account = accountRepository.findById(userDetails.getId()).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
+        account.setRole(roleFactory.getInstance(role));
+        return accountMapper.toAccountResponse(accountRepository.save(account));
+    }
 }

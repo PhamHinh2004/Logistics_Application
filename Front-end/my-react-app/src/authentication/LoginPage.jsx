@@ -112,12 +112,46 @@ function LoginPage() {
     }
   };
 
+  const checkEmailAvailability = async (email) => {
+    if (email.trim() === "") {
+      setExitedUsername({ valid: null, message: "Vui lòng nhập email" });
+      return;
+    } // Skip empty email
+
+    const url = `http://localhost:9000/account/check-email?email=${encodeURIComponent(email)}`;
+    try {
+      const response = await fetch(url);
+      if (response.ok) {
+        const data = await response.json();
+        if (!data.response) {
+          setExitedUsername({
+            valid: false,
+            message: " ❌ Email không tồn tại",
+          });
+        }
+        else {
+          setExitedUsername({
+            valid: true,
+            message: " ✅ Email đã tồn tại",
+          });
+        }
+        console.log(`Email "${email}" availability:`, data.response);
+      }
+    } catch (error) {
+      setExitedUsername({
+        valid: false,
+        message: "Không thể kiểm tra email",
+      });
+    }
+  };
+
   useEffect(() => {
     checkUsernameAvailability(form.username);
   }, [form.username]);
 
-
-
+  useEffect(() => {
+    checkEmailAvailability(form.email);
+  }, [form.email]);
 
   const set = (field) => (e) =>
     setForm((prev) => ({ ...prev, [field]: e.target.value }));

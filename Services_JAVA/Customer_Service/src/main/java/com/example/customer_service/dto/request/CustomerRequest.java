@@ -1,9 +1,6 @@
 package com.example.customer_service.dto.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Date;
 
@@ -17,7 +14,6 @@ public class CustomerRequest {
     private String contactEmail;
     private String address;
     private String note;
-    private Date created_At;
-    private Date updated_At;
+    private String gender;
     private String user_id;
 }

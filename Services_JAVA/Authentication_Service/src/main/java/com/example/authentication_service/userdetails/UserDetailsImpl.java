@@ -36,6 +36,7 @@ public class UserDetailsImpl implements UserDetails {
     private boolean isActive;
     private String phone;
     private StatusAccount statusAccount;
+    private boolean createCustomer;
 
     public static UserDetailsImpl build(Account account) {
         List<SimpleGrantedAuthority> authorities = account.getRole() != null ?
@@ -51,6 +52,7 @@ public class UserDetailsImpl implements UserDetails {
                 .isActive(account.isActive())
                 .phone(account.getPhone())
                 .statusAccount(account.getStatusAccount())
+                .createCustomer(account.isCreateCustomer())
                 .build();
     }
 
@@ -88,4 +90,9 @@ public class UserDetailsImpl implements UserDetails {
     public boolean isEnabled() {
         return UserDetails.super.isEnabled();
     }
+
+    public boolean getCreateCustomer(){
+        return this.createCustomer;
+    }
+
 }
