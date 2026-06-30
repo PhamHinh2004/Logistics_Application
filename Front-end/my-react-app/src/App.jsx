@@ -4,6 +4,7 @@ import OAuth2RedirectHandler from './authentication/OAuth2RedirectHandler'
 import LandingPage from './components/LandingPage'
 import ContactPage from './components/ContactPage'
 import AboutUsPage from './components/AboutUsPage'
+import CustomerInformation from './customer/CustomerinformationPage'
 import React from 'react'
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import './App.css'
@@ -17,6 +18,7 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/about" element={<AboutUsPage />} />
+        <Route path="/onboarding" element={<CustomerInformation onFinish={(data) => console.log(data)} />} />
       </Routes>
     </BrowserRouter>
   )

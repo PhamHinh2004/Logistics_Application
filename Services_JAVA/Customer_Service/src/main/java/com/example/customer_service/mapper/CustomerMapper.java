@@ -11,6 +11,8 @@ public interface CustomerMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "created_At", ignore = true)
     @Mapping(target = "updated_At", ignore = true)
+    @Mapping(target = "quotations", ignore = true)
+    @Mapping(target = "gender", ignore = true)
     Customer toCustomer(CustomerRequest customerRequest);
 
 

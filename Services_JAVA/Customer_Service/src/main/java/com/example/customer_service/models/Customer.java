@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CurrentTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -32,6 +33,8 @@ public class Customer {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated_At;
     private String user_id;
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Quotation> quotations;
 }

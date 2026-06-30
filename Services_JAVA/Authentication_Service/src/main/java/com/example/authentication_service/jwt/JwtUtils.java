@@ -28,7 +28,7 @@ public class JwtUtils {
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
 
         return Jwts.builder()
-                .setSubject((userPrincipal.getEmail()))
+                .setSubject((userPrincipal.getId()))
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
                 .signWith(key(), SignatureAlgorithm.HS256)
@@ -48,6 +48,13 @@ public class JwtUtils {
                 .getSubject();
     }
 
+    /**
+     * Retrieve the subject (Account ID) from a JWT.
+     */
+    public String getUserIdFromJwtToken(String token) {
+        return getUserNameFromJwtToken(token);
+    }
+
     public boolean validateJwtToken(String authToken) {
         try {
             Jwts.parserBuilder().setSigningKey(key()).build().parse(authToken);
@@ -65,9 +72,14 @@ public class JwtUtils {
         return false;
     }
 
-    public String generateJwtTokenFromEmail(String email) {
+    /**
+     * Generate a JWT where the subject is the internal Account ID.
+     * This is used for OAuth2 flows and refresh‑token endpoint after the
+     * migration to ID‑based subjects.
+     */
+    public String generateJwtTokenFromId(String accountId) {
         return Jwts.builder()
-                .setSubject(email)
+                .setSubject(accountId)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
                 .signWith(key(), SignatureAlgorithm.HS256)
