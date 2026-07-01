@@ -114,31 +114,6 @@ function RegisterPage() {
         confirmPassword: false,
     });
 
-    const loadRoles = async () => {
-        const url = 'http://localhost:9000/api/roles';
-        try {
-            const response = await fetch(url);
-            if (response.ok) {
-                const data = await response.json();
-                const roleOptions = data.map((role) => {
-                    const roleName = role.name.replace("ROLE_", "");
-
-                    return {
-                        value: roleName,
-                        label: role.label || roleName,
-                        icon: role.icon || "👤",
-                    };
-                });
-                setRoles(roleOptions);
-            } else {
-                const errorData = await response.json();
-                alert(errorData.message);
-                console.error('Failed to fetch roles');
-            }
-        } catch (error) {
-            console.error('Error fetching roles:', error);
-        }
-    }
 
     const checkUsernameAvailability = async (username) => {
         if (!username.trim()) {
@@ -244,10 +219,25 @@ function RegisterPage() {
             // Add more cases for other fields as needed
         }
     };
+    const addAccount = async (payload) => {
+        try {
+            const response = await fetch("http://localhost:9000/account/auth/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(payload),
+            });
+            if (response.ok) {
+                console.log("Account created successfully");
+            } else {
+                console.error("Failed to create account");
+            }
+        } catch (error) {
+            console.error("Error creating account:", error);
+        }
+    };
 
-    useEffect(() => {
-        loadRoles();
-    }, []);
 
     useEffect(() => {
         if (touched.username) {
@@ -286,7 +276,7 @@ function RegisterPage() {
         const errs = validate(form);
         if (!agreed) errs.agreed = "Vui lòng đồng ý điều khoản!";
         setErrors(errs);
-        if (Object.keys(errs).length > 0) return;
+
 
         // Payload match AccountSignUp DTO
         const payload = {
@@ -295,7 +285,7 @@ function RegisterPage() {
             password: form.password,
             role: form.role || "user",
         };
-        console.log("POST /api/auth/signup →", payload);
+        addAccount(payload);
         setSubmitted(true);
     };
 
