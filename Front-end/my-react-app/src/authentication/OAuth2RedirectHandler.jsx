@@ -1,9 +1,10 @@
 import React, { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-
+import { useAuth } from "../context/Authcontext";
 function OAuth2RedirectHandler() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   useEffect(() => {
     // Lấy token từ URL query parameter (?token=...&refreshToken=...)
@@ -11,6 +12,7 @@ function OAuth2RedirectHandler() {
     const refreshToken = searchParams.get("refreshToken");
     const createdCustomer = searchParams.get("createdCustomer");
     const id = searchParams.get("id");
+
     if (token) {
       // Lưu token và refreshToken vào localStorage
       localStorage.setItem("token", token);
@@ -27,6 +29,7 @@ function OAuth2RedirectHandler() {
       }
       else {
         // Chuyển hướng người dùng đến trang chính hoặc trang mong muốn
+        login({ name: "User" }, token, refreshToken); // Cập nhật thông tin người dùng trong context
         navigate("/");
       }
     } else {

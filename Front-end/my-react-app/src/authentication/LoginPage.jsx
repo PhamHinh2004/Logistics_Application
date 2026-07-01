@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-
+import { useAuth } from "../context/Authcontext";
+import { useNavigate } from "react-router-dom";
 // ─── SVG Illustration (reuse warehouse) ──────────────────────────────────────
 const WarehouseIllustration = () => (
   <svg viewBox="0 0 340 280" fill="none" xmlns="http://www.w3.org/2000/svg"
@@ -79,6 +80,8 @@ function LoginPage() {
   const [exitedusername, setExitedUsername] = useState({ valid: null, message: "" });
   const [existedPassword, setExistedPassword] = useState({ valid: null, message: "" });
   const [errors, setErrors] = useState({ username: "", password: "" });
+  const { user, login } = useAuth();
+  const navigate = useNavigate();
 
   const checkUsernameAvailability = async (username) => {
     if (username.trim() === "") {
@@ -174,6 +177,9 @@ function LoginPage() {
       if (response.ok) {
         const data = await response.json();
         alert("Đăng nhập thành công!");
+        // Lưu token vào localStorage hoặc sessionStorage
+        login(data, data.accessToken, data.refreshToken);
+        navigate("/"); // Chuyển hướng người dùng đến trang chính hoặc trang mong muốn
       } else {
         const errorData = await response.json();
         setApiError(errorData.message || "Đăng nhập thất bại!");
