@@ -1,0 +1,12 @@
+﻿using Fleet_Service.Models;
+using MongoDB.Driver;
+
+namespace Fleet_Service.Repositories
+{
+ 
+    public class VehicleRepository
+    {
+        private readonly IMongoCollection<Vehicle> _vehiclesCollection;
+        
+    }
+}
