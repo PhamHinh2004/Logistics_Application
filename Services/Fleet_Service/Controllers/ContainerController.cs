@@ -1,5 +1,7 @@
+using Fleet_Service.dto.request;
 using Fleet_Service.Models;
 using Fleet_Service.Repositories;
+using Fleet_Service.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Fleet_Service.Controllers
@@ -8,24 +10,24 @@ namespace Fleet_Service.Controllers
     [Route("api/[controller]")]
     public class ContainerController : ControllerBase
     {
-        private readonly ContainerRepository _containerRepository;
+        private readonly ContainerService _containerService;
 
-        public ContainerController(ContainerRepository containerRepository)
+        public ContainerController(ContainerService containerService)
         {
-            _containerRepository = containerRepository;
+            _containerService = containerService;
         }
 
         [HttpGet]
         public async Task<ActionResult<List<Container>>> GetAll()
         {
-            var containers = await _containerRepository.GetAllAsync();
+            var containers = await _containerService.GetAllAsync();
             return Ok(containers);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Container>> GetById(string id)
         {
-            var container = await _containerRepository.GetByIdAsync(id);
+            var container = await _containerService.GetByIdAsync(id);
             if (container == null)
             {
                 return NotFound(new { message = $"Container with id '{id}' not found." });
@@ -34,23 +36,23 @@ namespace Fleet_Service.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Container newContainer)
+        public async Task<IActionResult> Create(ContainerRequest newContainer)
         {
-            await _containerRepository.CreateAsync(newContainer);
-            return CreatedAtAction(nameof(GetById), new { id = newContainer.Id }, newContainer);
+             var container = await _containerService.CreateContainer(newContainer);
+            return CreatedAtAction(nameof(GetById), new { id = container.Id }, container);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(string id, Container updatedContainer)
         {
-            var existingContainer = await _containerRepository.GetByIdAsync(id);
+            var existingContainer = await _containerService.GetByIdAsync(id);
             if (existingContainer == null)
             {
                 return NotFound(new { message = $"Container with id '{id}' not found." });
             }
 
             updatedContainer.Id = id; // Ensure ID consistency
-            await _containerRepository.UpdateAsync(id, updatedContainer);
+            await _containerService.UpdateAsync(id, updatedContainer);
 
             return NoContent();
         }
@@ -58,13 +60,13 @@ namespace Fleet_Service.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
-            var existingContainer = await _containerRepository.GetByIdAsync(id);
+            var existingContainer = await _containerService.GetByIdAsync(id);
             if (existingContainer == null)
             {
                 return NotFound(new { message = $"Container with id '{id}' not found." });
             }
 
-            await _containerRepository.DeleteAsync(id);
+            await _containerService.DeleteAsync(id);
 
             return NoContent();
         }
