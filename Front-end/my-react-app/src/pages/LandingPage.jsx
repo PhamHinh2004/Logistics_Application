@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Navigation from "./Navigation";
+import Navigation from "../components/Navigation";
 // ─── Design tokens ───────────────────────────────────────────────────────────
 const C = {
   dark: "#1a1f1a",
