@@ -19,9 +19,11 @@ namespace Fleet_Service.Models
         public string IsoCode { get; set; } = string.Empty;
 
         [BsonElement("container_type")]
+        [BsonRepresentation(BsonType.String)]
         public ContainerType ContainerType { get; set; }
 
         [BsonElement("size_ft")]
+        [BsonRepresentation(BsonType.String)]
         public ContainerSize SizeFt { get; set; }
 
         [BsonElement("max_weight_kg")]
@@ -31,6 +33,7 @@ namespace Fleet_Service.Models
         public decimal TareWeightKg { get; set; }
 
         [BsonElement("status")]
+        [BsonRepresentation(BsonType.String)]
         public ContainerStatus Status { get; set; } = ContainerStatus.AVAILABLE;
 
         [BsonElement("owner_company")]
@@ -52,6 +55,6 @@ namespace Fleet_Service.Models
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         [BsonElement("updated_at")]
-        public DateTime? UpdatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     }
 }

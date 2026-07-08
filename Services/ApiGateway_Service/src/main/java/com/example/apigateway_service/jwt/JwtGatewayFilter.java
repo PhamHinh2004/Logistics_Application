@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 @Component
 public class JwtGatewayFilter extends OncePerRequestFilter {
@@ -19,36 +20,25 @@ public class JwtGatewayFilter extends OncePerRequestFilter {
     private JwtUtils jwtUtils;
 
     @Override
-    protected void doFilterInternal(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain filterChain)
-            throws ServletException, IOException {
-
+    protected void doFilterInternal( HttpServletRequest request,  HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String header =
                 request.getHeader("Authorization");
 
         if (header != null &&
                 header.startsWith("Bearer ")) {
-
             String token =
                     header.substring(7);
-
             if (!jwtUtils.validateJwtToken(token)) {
-
                 response.setStatus(
                         HttpServletResponse.SC_UNAUTHORIZED);
-
                 return;
             }
-
             // Set authentication in context
             String username = jwtUtils.getUserNameFromJwtToken(token);
             UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(username, null, new java.util.ArrayList<>());
+                    new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
            SecurityContextHolder.getContext().setAuthentication(authentication);
         }
-
         filterChain.doFilter(request, response);
     }
 }
