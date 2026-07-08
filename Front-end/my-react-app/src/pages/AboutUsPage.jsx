@@ -1,6 +1,6 @@
 import { useState } from "react";
-import Navigation from "./Navigation";
-import FooterPage from "./FooterPage";
+import Navigation from "../components/Navigation";
+import FooterPage from "../components/FooterPage";
 // ─── Design tokens ────────────────────────────────────────────────────────────
 const C = {
     purple: "#6c5ce7",
