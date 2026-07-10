@@ -32,7 +32,8 @@ public class Customer {
     @CurrentTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated_At;
-    private String user_id;
+    @Column(name = "user_id")
+    private String userId;
     @Enumerated(EnumType.STRING)
     private Gender gender;
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
