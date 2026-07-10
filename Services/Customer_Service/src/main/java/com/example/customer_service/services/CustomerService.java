@@ -12,9 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -56,4 +54,11 @@ public class CustomerService {
         }
     }
 
+    public CustomerResponse findCustomerByUserId(String userId) {
+        Customer customer = customerRepository.findByUserId(userId);
+        if (customer == null) {
+            throw new AppException(ErrorCode.NOT_FOUND);
+        }
+        return customerMapper.toCustomerResponse(customer);
+    }
 }

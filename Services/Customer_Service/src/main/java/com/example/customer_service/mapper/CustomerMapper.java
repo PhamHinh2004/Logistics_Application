@@ -15,6 +15,5 @@ public interface CustomerMapper {
     @Mapping(target = "gender", ignore = true)
     Customer toCustomer(CustomerRequest customerRequest);
 
-
     CustomerResponse toCustomerResponse(Customer customer);
 }
