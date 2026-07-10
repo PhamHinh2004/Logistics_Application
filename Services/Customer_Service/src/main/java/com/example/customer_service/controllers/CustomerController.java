@@ -30,4 +30,9 @@ public class CustomerController {
         return ResponseEntity.ok(new ApiResponseDto<>("Customers retrieved successfully", "success", customerService.findAllCustomers()));
     }
 
+    @GetMapping("/{userId}")
+    public ResponseEntity<ApiResponseDto<CustomerResponse>> findCustomerById(@PathVariable String userId) {
+        return ResponseEntity.ok(new ApiResponseDto<>("Customer retrieved successfully", "success", customerService.findCustomerByUserId(userId)));
+    }
+
 }

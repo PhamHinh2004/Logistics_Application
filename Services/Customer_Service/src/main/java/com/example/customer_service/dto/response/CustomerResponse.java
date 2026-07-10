@@ -19,7 +19,7 @@ public class CustomerResponse {
     private String address;
     private String note;
     private Gender gender;
-    private String user_id;
+    private String userId;
     private Date created_At;
     private Date updated_At;
 }
