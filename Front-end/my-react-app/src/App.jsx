@@ -9,6 +9,8 @@ import AboutUsPage from './pages/AboutUsPage'
 import CustomerInformation from './customer/CustomerinformationPage'
 import ContainerConfigurator from './pages/ContainerConfigurator'
 import ContainerListPage from './pages/ContainerListPage'
+import QuotationWizard from './pages/quotation/QuotationWizard'
+import {QuotationProvider} from './context/QuotationContext'
 import './App.css'
 function App() {
   return (
@@ -23,6 +25,11 @@ function App() {
         <Route path="/onboarding" element={<CustomerInformation onFinish={(data) => console.log(data)} />} />
         <Route path="/services" element={<ContainerListPage />} />
         <Route path="/demo" element={<ContainerConfigurator />} />
+        <Route path="/quotation" element={
+          <QuotationProvider>
+            <QuotationWizard />
+          </QuotationProvider>
+        } />
       </Routes>
     </BrowserRouter>
   )
