@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "quotations")
@@ -17,22 +18,22 @@ import java.util.Date;
 @Builder
 public class Quotation {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
     private int quoteCode;
     private String origin;
-    private String destination;
     private String cargoType;
-    private double weight;
-    private float distant;
     private double basePrice;
     private double totalPrice;
     @Enumerated(EnumType.STRING)
     private StatusQuotation status;
-    private Date created_At;
-    private Date updated_At;
+    private LocalDateTime created_At;
+    private LocalDateTime updated_At;
     private LocalDateTime valid_at;
     @ManyToOne
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
     private Customer customer;
+
+    @OneToMany(mappedBy = "quotation", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<QuotationItem> quotationItems;
 }
