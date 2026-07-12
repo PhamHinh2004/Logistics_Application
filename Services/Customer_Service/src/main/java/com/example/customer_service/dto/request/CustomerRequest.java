@@ -15,5 +15,5 @@ public class CustomerRequest {
     private String address;
     private String note;
     private String gender;
-    private String user_id;
+    private String userId;
 }

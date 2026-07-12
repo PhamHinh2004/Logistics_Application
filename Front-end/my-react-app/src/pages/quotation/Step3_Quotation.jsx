@@ -1,5 +1,5 @@
 import { FileText, Package } from "lucide-react";
-export default function Step3_Quotation({ step, items, setItems, updateItem, emptyItem, setStep3Valid, quoteCode, cargoType, basePrice, totalPrice, status, priced, fmt }) {
+export default function Step3_Quotation({ step, items, setItems, updateItem, emptyItem, setStep3Valid, quoteCode, basePrice, totalPrice, status, priced, fmt }) {
     return (
         <div>
             {step === 3 && (
@@ -37,10 +37,6 @@ export default function Step3_Quotation({ step, items, setItems, updateItem, emp
                             <div className="flex items-center justify-between px-5 py-3">
                                 <span className="text-[13px] text-[#9CA3AF] flex items-center gap-1.5"><FileText size={13} /> Mã báo giá</span>
                                 <span className="font-mono text-[13px]">{quoteCode}</span>
-                            </div>
-                            <div className="flex items-center justify-between px-5 py-3">
-                                <span className="text-[13px] text-[#9CA3AF]">Loại hàng</span>
-                                <span className="text-[13px]">{cargoType || "—"}</span>
                             </div>
                             <div className="flex items-center justify-between px-5 py-3.5">
                                 <span className="text-[13px] text-[#9CA3AF]">Giá cơ bản</span>

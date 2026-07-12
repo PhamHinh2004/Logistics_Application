@@ -11,16 +11,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class QuotationRequest {
-    private int quoteCode;
-    private String origin;
-    private String cargoType;
-    private double basePrice;
+    private String quoteCode;
     private double totalPrice;
     private StatusQuotation status;
+    private List<QuotationItemRequest> quotationItems;
 }

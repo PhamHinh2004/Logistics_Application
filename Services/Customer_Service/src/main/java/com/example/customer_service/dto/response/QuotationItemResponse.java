@@ -17,16 +17,21 @@ import java.time.LocalDateTime;
 @Builder
 public class QuotationItemResponse {
     private String id;
-    private Quotation quotation;
     private double weight;
-    private String pickup_address;
-    private String delivery_address;
     private float distant;
-    private double unit_price;
+    private String cargo_type;
+    private String delivery_address;
+    private double delivery_lat;
+    private double delivery_lng;
+    private String pickup_address;
+    private double pickup_lat;
+    private double pickup_lng;
     private ContainerType container_type;
+    private SizeFt size_ft;
     private String color;
     private String owner_company;
-    private SizeFt size_ft;
+    private double unit_price;
+    private String note;
     private LocalDate pickup_date;
     private LocalDateTime created_at;
     private LocalDateTime updated_at;
