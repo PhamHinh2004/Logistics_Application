@@ -1,6 +1,6 @@
 import { useRef, useState, Suspense } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, Environment, ContactShadows, RoundedBox, } from "@react-three/drei";
+import { OrbitControls, Environment, ContactShadows } from "@react-three/drei";
 import * as THREE from "three";
 import { useNavigate } from "react-router-dom";
 import CONTAINERS from "../assets/containers";
@@ -26,7 +26,6 @@ function makeRibTexture(baseColor, axis = "x") {
 
   for (let i = 0; i < count; i++) {
     const x = i * ribW;
-    // shadow groove
     const grad = ctx.createLinearGradient(x, 0, x + ribW, 0);
     grad.addColorStop(0, `rgba(0,0,0,0.0)`);
     grad.addColorStop(0.1, `rgba(0,0,0,0.18)`);
@@ -71,6 +70,78 @@ function makeBumpTexture(axis = "x") {
   return tex;
 }
 
+// ─── Wood-plank floor texture ──────────────────────────────────────────────────
+function makeFloorTexture() {
+  const w = 256, h = 256;
+  const c = document.createElement("canvas");
+  c.width = w; c.height = h;
+  const ctx = c.getContext("2d");
+  const planks = 8;
+  for (let i = 0; i < planks; i++) {
+    const y = (i * h) / planks;
+    const ph = h / planks;
+    const shade = i % 2 === 0 ? "#5c4526" : "#4d3a1f";
+    ctx.fillStyle = shade;
+    ctx.fillRect(0, y, w, ph);
+    ctx.strokeStyle = "rgba(0,0,0,0.4)";
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+    ctx.strokeStyle = "rgba(0,0,0,0.12)";
+    ctx.lineWidth = 1;
+    for (let g = 0; g < 4; g++) {
+      const gy = y + Math.random() * ph;
+      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke();
+    }
+  }
+  const tex = new THREE.CanvasTexture(c);
+  tex.wrapS = THREE.RepeatWrapping;
+  tex.wrapT = THREE.RepeatWrapping;
+  return tex;
+}
+
+// ─── Container ID / data-plate decal (transparent, non-tiling) ────────────────
+function makeIdDecalTexture(L, H, code, sizeType) {
+  const w = 1024;
+  const h = Math.max(64, Math.round((w * H) / L));
+  const c = document.createElement("canvas");
+  c.width = w; c.height = h;
+  const ctx = c.getContext("2d");
+  ctx.clearRect(0, 0, w, h);
+
+  ctx.fillStyle = "rgba(255,255,255,0.95)";
+  ctx.textBaseline = "alphabetic";
+  ctx.font = `bold ${Math.round(h * 0.13)}px Arial, sans-serif`;
+  ctx.fillText(code, w * 0.055, h * 0.3);
+
+  ctx.font = `bold ${Math.round(h * 0.085)}px Arial, sans-serif`;
+  ctx.fillStyle = "rgba(255,255,255,0.85)";
+  ctx.fillText(sizeType, w * 0.055, h * 0.42);
+
+  ctx.strokeStyle = "rgba(255,255,255,0.55)";
+  ctx.lineWidth = h * 0.006;
+  ctx.strokeRect(w * 0.055, h * 0.58, w * 0.26, h * 0.2);
+  ctx.font = `${Math.round(h * 0.028)}px monospace`;
+  ctx.fillStyle = "rgba(255,255,255,0.8)";
+  ctx.fillText("MAX GROSS 30480 KG", w * 0.07, h * 0.65);
+  ctx.fillText("TARE  2 200 KG", w * 0.07, h * 0.7);
+  ctx.fillText("CU CAP  33.2 CBM", w * 0.07, h * 0.75);
+
+  // faint vertical weathering streaks
+  for (let i = 0; i < 5; i++) {
+    const x = Math.random() * w;
+    const grad = ctx.createLinearGradient(x, 0, x, h);
+    grad.addColorStop(0, "rgba(0,0,0,0.12)");
+    grad.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.fillStyle = grad;
+    ctx.fillRect(x, 0, w * 0.008, h * 0.55);
+  }
+
+  const tex = new THREE.CanvasTexture(c);
+  tex.wrapS = THREE.ClampToEdgeWrapping;
+  tex.wrapT = THREE.ClampToEdgeWrapping;
+  return tex;
+}
+
 // ─── Container 3D model ───────────────────────────────────────────────────────
 function ContainerModel({ catId, L, H, W, color }) {
   const groupRef = useRef();
@@ -105,52 +176,119 @@ function ContainerModel({ catId, L, H, W, color }) {
   });
   const darkMat = new THREE.MeshStandardMaterial({ color: "#1a1c20", roughness: 0.9 });
   const handleMat = new THREE.MeshStandardMaterial({ color: "#4a5260", metalness: 0.65, roughness: 0.35 });
-  const floorMat = new THREE.MeshStandardMaterial({ color: "#3a3000", roughness: 0.95 });
   const roofMat = new THREE.MeshStandardMaterial({ color: "#2e3238", metalness: 0.2, roughness: 0.7 });
+  const tankMat = new THREE.MeshStandardMaterial({ color: color, metalness: 0.55, roughness: 0.3 });
+  const cscMat = new THREE.MeshStandardMaterial({ color: "#ddd", metalness: 0.3, roughness: 0.6 });
+
+  const floorTex = makeFloorTexture();
+  floorTex.repeat.set(L * 2.5, W * 4);
+  const floorMat = new THREE.MeshStandardMaterial({ map: floorTex, roughness: 0.95 });
 
   const hl = L / 2, hw = W / 2, hh = H / 2;
+
+  const sizeCode = L > 3 ? (L > 4 ? "45G1" : "42G1") : "22G1";
+  const idDecalTex = makeIdDecalTexture(L, H, "CBHU 305174 2", sizeCode);
+  const decalMat = new THREE.MeshStandardMaterial({
+    map: idDecalTex, transparent: true, roughness: 0.7, metalness: 0.05,
+    depthWrite: false, side: THREE.DoubleSide,
+  });
+
+  const cornerPositions = [-hl, hl].flatMap((px) =>
+    [-hw, hw].flatMap((pz) => [0, H].map((py) => [px, py, pz]))
+  );
+
+  // ── Which real-world category are we drawing? ──
+  const isFlat = catId === "flat";     // flat rack: platform + 2 end bulkheads only
+  const isTank = catId === "tank";     // tank: bare ISO frame + cylindrical tank
+  const isOpenTop = catId === "opentop"; // open top: no roof, has bows + tarp
+  const isBulk = catId === "bulk";     // bulk: dry-like shell + round loading hatches
+  const isSpec = catId === "spec";     // special equipment: dry-like shell + vents
+  const isReefer = catId === "reefer";
+
+  const hasSidePanels = !isFlat && !isTank && !isSpec;
+  const hasFrontPanel = !isFlat && !isTank && !isSpec;
+  const hasDoors = !isFlat && !isTank && !isSpec;
+  const hasRoof = !isOpenTop && !isFlat && !isTank && !isSpec;
+  const hasFloorSlab = !isTank;
 
   return (
     <group ref={groupRef} position={[0, 0, 0]}>
 
       {/* ── Side panels (left & right) ── */}
-      <mesh material={bodyMat} castShadow receiveShadow position={[0, hh, -hw + 0.009]}>
-        <boxGeometry args={[L - fw * 2, H - fw * 2, 0.016]} />
-      </mesh>
-      <mesh material={bodyMat} castShadow receiveShadow position={[0, hh, hw - 0.009]}>
-        <boxGeometry args={[L - fw * 2, H - fw * 2, 0.016]} />
-      </mesh>
+      {hasSidePanels && (
+        <>
+          <mesh material={bodyMat} castShadow receiveShadow position={[0, hh, -hw + 0.009]}>
+            <boxGeometry args={[L - fw * 2, H - fw * 2, 0.016]} />
+          </mesh>
+          <mesh material={bodyMat} castShadow receiveShadow position={[0, hh, hw - 0.009]}>
+            <boxGeometry args={[L - fw * 2, H - fw * 2, 0.016]} />
+          </mesh>
+          {/* container-ID / data-plate decals, printed on top of the corrugation */}
+          <mesh material={decalMat} position={[0, hh, -hw + 0.0002]}>
+            <planeGeometry args={[L - fw * 2, H - fw * 2]} />
+          </mesh>
+          <mesh material={decalMat} position={[0, hh, hw - 0.0002]}>
+            <planeGeometry args={[L - fw * 2, H - fw * 2]} />
+          </mesh>
+        </>
+      )}
 
       {/* ── Front panel ── */}
-      <mesh material={frontMat} castShadow receiveShadow position={[-hl + 0.008, hh, 0]}>
-        <boxGeometry args={[0.016, H - fw * 2, W - fw * 2]} />
-      </mesh>
-
-      {/* ── Door panels (rear) ── */}
-      <mesh material={frontMat} castShadow receiveShadow position={[hl - 0.008, hh, W * 0.26]}>
-        <boxGeometry args={[0.016, H - fw * 2 - 0.01, W * 0.46]} />
-      </mesh>
-      <mesh material={frontMat} castShadow receiveShadow position={[hl - 0.008, hh, -W * 0.26]}>
-        <boxGeometry args={[0.016, H - fw * 2 - 0.01, W * 0.46]} />
-      </mesh>
-
-      {/* ── Roof ── */}
-      {catId !== "opentop" && (
-        <mesh material={roofMat} castShadow receiveShadow position={[0, H - fw / 2, 0]}>
-          <boxGeometry args={[L - fw * 2, fw * 0.6, W - fw * 2]} />
+      {hasFrontPanel && (
+        <mesh material={frontMat} castShadow receiveShadow position={[-hl + 0.008, hh, 0]}>
+          <boxGeometry args={[0.016, H - fw * 2, W - fw * 2]} />
         </mesh>
       )}
 
-      {/* ── Floor ── */}
-      <mesh material={floorMat} castShadow receiveShadow position={[0, fw * 0.4, 0]}>
-        <boxGeometry args={[L - fw * 2, fw * 0.65, W - fw * 2]} />
-      </mesh>
+      {/* ── Door panels (rear) ── */}
+      {hasDoors && (
+        <>
+          <mesh material={frontMat} castShadow receiveShadow position={[hl - 0.008, hh, W * 0.26]}>
+            <boxGeometry args={[0.016, H - fw * 2 - 0.01, W * 0.46]} />
+          </mesh>
+          <mesh material={frontMat} castShadow receiveShadow position={[hl - 0.008, hh, -W * 0.26]}>
+            <boxGeometry args={[0.016, H - fw * 2 - 0.01, W * 0.46]} />
+          </mesh>
+        </>
+      )}
+
+      {/* ── Roof ── */}
+      {hasRoof && (
+        <>
+          <mesh material={roofMat} castShadow receiveShadow position={[0, H - fw / 2, 0]}>
+            <boxGeometry args={[L - fw * 2, fw * 0.6, W - fw * 2]} />
+          </mesh>
+          {/* rain gutter / drip rail above the doors */}
+          <mesh material={frameMat} castShadow position={[hl - fw * 0.9, H + 0.006, 0]}>
+            <boxGeometry args={[0.02, 0.014, W]} />
+          </mesh>
+        </>
+      )}
+
+      {/* ── Floor / deck ── */}
+      {hasFloorSlab && (
+        <mesh material={floorMat} castShadow receiveShadow position={[0, fw * 0.4, 0]}>
+          <boxGeometry args={[L - fw * 2, fw * 0.65, W - fw * 2]} />
+        </mesh>
+      )}
 
       {/* ── Frame: 4 vertical corner posts ── */}
       {[[-hl, -hw], [hl, -hw], [-hl, hw], [hl, hw]].map(([px, pz], i) => (
         <mesh key={i} material={frameMat} castShadow position={[px, hh, pz]}>
           <boxGeometry args={[fw, H + 0.01, fw]} />
         </mesh>
+      ))}
+
+      {/* ── ISO corner castings (8x) — the cast steel blocks with the oval twist-lock hole ── */}
+      {cornerPositions.map(([px, py, pz], i) => (
+        <group key={i} position={[px, py, pz]}>
+          <mesh material={frameMat} castShadow>
+            <boxGeometry args={[fw * 1.05, fw * 0.85, fw * 1.05]} />
+          </mesh>
+          <mesh material={darkMat} position={[0, py === 0 ? fw * 0.44 : -fw * 0.44, 0]}>
+            <boxGeometry args={[fw * 0.42, 0.01, fw * 0.62]} />
+          </mesh>
+        </group>
       ))}
 
       {/* ── Frame: top & bottom rails (Z axis) ── */}
@@ -163,28 +301,41 @@ function ContainerModel({ catId, L, H, W, color }) {
         </group>
       ))}
 
-      {/* ── Door center divider ── */}
-      <mesh material={darkMat} position={[hl + 0.004, hh, 0]}>
-        <boxGeometry args={[0.008, H - fw * 2, 0.01]} />
-      </mesh>
+      {/* ── Door center divider + locking bars ── */}
+      {hasDoors && (
+        <>
+          <mesh material={darkMat} position={[hl + 0.004, hh, 0]}>
+            <boxGeometry args={[0.008, H - fw * 2, 0.01]} />
+          </mesh>
+          {[W * 0.22, -W * 0.22].map((dz, i) => (
+            <group key={i}>
+              <mesh material={handleMat} castShadow position={[hl + 0.022, hh, dz]}>
+                <boxGeometry args={[0.016, H * 0.52, 0.016]} />
+              </mesh>
+              <mesh material={handleMat} castShadow position={[hl + 0.028, hh * 0.88, dz]}>
+                <boxGeometry args={[0.038, 0.038, 0.038]} />
+              </mesh>
+              <mesh material={handleMat} castShadow position={[hl + 0.028, hh * 1.12, dz]}>
+                <boxGeometry args={[0.038, 0.038, 0.038]} />
+              </mesh>
+            </group>
+          ))}
+          {/* door hinge barrels against the rear corner posts */}
+          {[hw - 0.006, -hw + 0.006].map((pz, i) => (
+            <group key={i}>
+              {[0.15, 0.5, 0.85].map((f, j) => (
+                <mesh key={j} material={handleMat} castShadow
+                  position={[hl - 0.006, H * f, pz]} rotation={[0, 0, Math.PI / 2]}>
+                  <cylinderGeometry args={[0.011, 0.011, 0.045, 10]} />
+                </mesh>
+              ))}
+            </group>
+          ))}
+        </>
+      )}
 
-      {/* ── Door locking bars ── */}
-      {[W * 0.22, -W * 0.22].map((dz, i) => (
-        <group key={i}>
-          <mesh material={handleMat} castShadow position={[hl + 0.022, hh, dz]}>
-            <boxGeometry args={[0.016, H * 0.52, 0.016]} />
-          </mesh>
-          <mesh material={handleMat} castShadow position={[hl + 0.028, hh * 0.88, dz]}>
-            <boxGeometry args={[0.038, 0.038, 0.038]} />
-          </mesh>
-          <mesh material={handleMat} castShadow position={[hl + 0.028, hh * 1.12, dz]}>
-            <boxGeometry args={[0.038, 0.038, 0.038]} />
-          </mesh>
-        </group>
-      ))}
-
-      {/* ── Fork pockets ── */}
-      {[-L * 0.25, L * 0.25].map((px, i) =>
+      {/* ── Fork pockets (only where there's a floor to pocket) ── */}
+      {hasFloorSlab && [-L * 0.25, L * 0.25].map((px, i) =>
         [-hw * 0.45, hw * 0.45].map((pz, j) => (
           <mesh key={`${i}-${j}`} material={darkMat} position={[px, fw * 0.28, pz]}>
             <boxGeometry args={[0.2, fw * 0.5, 0.12]} />
@@ -193,12 +344,14 @@ function ContainerModel({ catId, L, H, W, color }) {
       )}
 
       {/* ── CSC plate (front) ── */}
-      <mesh material={new THREE.MeshStandardMaterial({ color: "#ddd", metalness: 0.3, roughness: 0.6 })} position={[-hl - 0.003, H * 0.65, 0]}>
-        <boxGeometry args={[0.006, 0.1, 0.16]} />
-      </mesh>
+      {hasFrontPanel && (
+        <mesh material={cscMat} position={[-hl - 0.003, H * 0.65, 0]}>
+          <boxGeometry args={[0.006, 0.1, 0.16]} />
+        </mesh>
+      )}
 
-      {/* ── Reefer unit ── */}
-      {catId === "reefer" && (
+      {/* ── REEFER: condenser unit up front, with fan grilles + control panel ── */}
+      {isReefer && (
         <group position={[-hl - 0.13, hh, 0]}>
           <mesh material={new THREE.MeshStandardMaterial({ color: "#1e2530", metalness: 0.2, roughness: 0.6 })} castShadow>
             <boxGeometry args={[0.22, H * 0.9, W * 0.9]} />
@@ -208,24 +361,138 @@ function ContainerModel({ catId, L, H, W, color }) {
               <boxGeometry args={[0.05, H * 0.72, 0.012]} />
             </mesh>
           ))}
+          {/* twin circular condenser-fan grilles, lower half */}
+          {[-W * 0.22, W * 0.22].map((fz, i) => (
+            <mesh key={i} material={new THREE.MeshStandardMaterial({ color: "#161a20", metalness: 0.3, roughness: 0.5 })}
+              rotation={[0, Math.PI / 2, 0]} position={[0.115, -H * 0.22, fz]}>
+              <torusGeometry args={[W * 0.14, 0.008, 8, 20]} />
+            </mesh>
+          ))}
+          {/* small digital control panel */}
+          <mesh material={new THREE.MeshStandardMaterial({ color: "#0c0f14", emissive: "#0a3a1f", emissiveIntensity: 0.4, roughness: 0.4 })}
+            position={[0.115, H * 0.28, 0]}>
+            <boxGeometry args={[0.01, 0.09, 0.14]} />
+          </mesh>
         </group>
       )}
 
-      {/* ── Open top bows ── */}
-      {catId === "opentop" && Array.from({ length: Math.round(L / 0.3) + 1 }, (_, i) => (
-        <mesh key={i} material={new THREE.MeshStandardMaterial({ color: "#5a3e22", roughness: 0.9 })}
-          position={[-hl + fw + i * (L - fw * 2) / Math.round(L / 0.3), H + 0.016, 0]} castShadow>
-          <boxGeometry args={[0.028, 0.028, W + 0.015]} />
+      {/* ── OPEN TOP: removable roof bows + tarpaulin ── */}
+      {isOpenTop && (
+        <>
+          {Array.from({ length: Math.round(L / 0.3) + 1 }, (_, i) => (
+            <mesh key={i} material={new THREE.MeshStandardMaterial({ color: "#5a3e22", roughness: 0.9 })}
+              position={[-hl + fw + i * (L - fw * 2) / Math.round(L / 0.3), H + 0.016, 0]} castShadow>
+              <boxGeometry args={[0.028, 0.028, W + 0.015]} />
+            </mesh>
+          ))}
+          <mesh position={[0, H + 0.026, 0]} rotation={[-Math.PI / 2, 0, 0]} castShadow>
+            <planeGeometry args={[L - fw * 1.4, W - fw * 1.4]} />
+            <meshStandardMaterial color="#33383f" transparent opacity={0.6} side={THREE.DoubleSide} roughness={0.85} />
+          </mesh>
+        </>
+      )}
+
+      {/* ── TANK: cylindrical tank + dished heads + saddle supports + catwalk + ladder ── */}
+      {isTank && (() => {
+        const tankR = W * 0.42, tankLen = L * 0.82, tankY = H * 0.52;
+        return (
+          <>
+            <mesh material={tankMat} rotation={[0, 0, Math.PI / 2]} castShadow
+              position={[0, tankY, 0]}>
+              <cylinderGeometry args={[tankR, tankR, tankLen, 36]} />
+            </mesh>
+            {/* dished (rounded) end caps */}
+            {[-tankLen / 2, tankLen / 2].map((ex, i) => (
+              <mesh key={i} material={tankMat} castShadow
+                position={[ex, tankY, 0]} scale={[0.4, 1, 1]}>
+                <sphereGeometry args={[tankR, 24, 16]} />
+              </mesh>
+            ))}
+            {/* saddle supports */}
+            {[-L * 0.22, L * 0.22].map((px, i) => (
+              <mesh key={i} material={frameMat} castShadow position={[px, H * 0.18, 0]}>
+                <boxGeometry args={[0.12, H * 0.36, W * 0.7]} />
+              </mesh>
+            ))}
+            {/* top manhole */}
+            <mesh material={handleMat} castShadow position={[0, tankY + tankR + 0.015, 0]}>
+              <cylinderGeometry args={[W * 0.1, W * 0.1, 0.03, 20]} />
+            </mesh>
+            {/* top catwalk with side railings */}
+            <group position={[0, tankY + tankR + 0.03, 0]}>
+              <mesh material={frameMat} castShadow>
+                <boxGeometry args={[tankLen * 0.85, 0.012, 0.16]} />
+              </mesh>
+              {[-tankLen * 0.35, -tankLen * 0.12, tankLen * 0.12, tankLen * 0.35].map((px, i) => (
+                <group key={i}>
+                  <mesh material={handleMat} position={[px, 0.08, 0.075]}><cylinderGeometry args={[0.006, 0.006, 0.16, 6]} /></mesh>
+                  <mesh material={handleMat} position={[px, 0.08, -0.075]}><cylinderGeometry args={[0.006, 0.006, 0.16, 6]} /></mesh>
+                </group>
+              ))}
+              <mesh material={handleMat} position={[0, 0.16, 0.075]}><boxGeometry args={[tankLen * 0.85, 0.008, 0.008]} /></mesh>
+              <mesh material={handleMat} position={[0, 0.16, -0.075]}><boxGeometry args={[tankLen * 0.85, 0.008, 0.008]} /></mesh>
+            </group>
+            {/* side ladder with individual rungs */}
+            <mesh material={handleMat} position={[-L * 0.24, H * 0.42, hw + 0.018]}>
+              <boxGeometry args={[0.012, H * 0.55, 0.012]} />
+            </mesh>
+            <mesh material={handleMat} position={[-L * 0.16, H * 0.42, hw + 0.018]}>
+              <boxGeometry args={[0.012, H * 0.55, 0.012]} />
+            </mesh>
+            {Array.from({ length: 6 }, (_, i) => (
+              <mesh key={i} material={handleMat}
+                position={[-L * 0.2, H * 0.18 + i * (H * 0.5) / 5, hw + 0.018]}>
+                <boxGeometry args={[0.09, 0.01, 0.01]} />
+              </mesh>
+            ))}
+            {/* valve box at the rear */}
+            <mesh material={frameMat} castShadow position={[hl - 0.06, H * 0.14, 0]}>
+              <boxGeometry args={[0.1, H * 0.22, W * 0.4]} />
+            </mesh>
+          </>
+        );
+      })()}
+
+      {/* ── FLAT (mặt bằng): bare open platform, no walls at all — just corner castings for oversized/overhanging cargo ── */}
+      {isFlat && [[-hl, -hw], [hl, -hw], [-hl, hw], [hl, hw]].map(([px, pz], i) => (
+        <mesh key={i} material={frameMat} castShadow position={[px, fw * 1.3, pz]}>
+          <boxGeometry args={[0.12, fw * 1.6, 0.12]} />
         </mesh>
       ))}
 
-      {/* ── Tank cylinder ── */}
-      {catId === "tank" && (
-        <mesh material={new THREE.MeshStandardMaterial({ color: color, metalness: 0.55, roughness: 0.35 })}
-          rotation={[0, 0, Math.PI / 2]} castShadow position={[0, H * 0.5 + W * 0.38 * 0.06, 0]}>
-          <cylinderGeometry args={[W * 0.4, W * 0.4, L * 0.88, 36]} />
-        </mesh>
+      {/* ── SPEC (chuyên dụng / collapsible flat rack): tall corrugated end walls that hinge down, like the reference photo ── */}
+      {isSpec && (
+        <>
+          {[-hl + 0.012, hl - 0.012].map((px, i) => (
+            <group key={i}>
+              <mesh material={frontMat} castShadow receiveShadow position={[px, H * 0.5, 0]}>
+                <boxGeometry args={[0.022, H - fw * 1.2, W - fw * 2]} />
+              </mesh>
+              {/* top rail cap of the end wall */}
+              <mesh material={frameMat} castShadow position={[px, H - fw * 0.3, 0]}>
+                <boxGeometry args={[0.05, fw * 0.6, W - fw * 1.6]} />
+              </mesh>
+              {/* hinge pins along the base of the end wall */}
+              {[-W * 0.35, 0, W * 0.35].map((pz, j) => (
+                <mesh key={j} material={handleMat} castShadow position={[px, fw * 0.9, pz]} rotation={[Math.PI / 2, 0, 0]}>
+                  <cylinderGeometry args={[0.018, 0.018, 0.06, 12]} />
+                </mesh>
+              ))}
+            </group>
+          ))}
+          {/* identification placard, bottom of one end wall */}
+          <mesh material={cscMat} position={[hl - 0.02, H * 0.16, W * 0.15]}>
+            <boxGeometry args={[0.005, 0.09, 0.14]} />
+          </mesh>
+        </>
       )}
+
+      {/* ── BULK: round top-loading hatches ── */}
+      {isBulk && hasRoof && [-L * 0.28, 0, L * 0.28].map((px, i) => (
+        <mesh key={i} material={handleMat} castShadow position={[px, H - fw * 0.28, 0]}>
+          <cylinderGeometry args={[Math.min(W * 0.16, 0.09), Math.min(W * 0.16, 0.09), 0.02, 20]} />
+        </mesh>
+      ))}
     </group>
   );
 }
@@ -422,7 +689,7 @@ export default function ContainerConfigurator() {
           </div>
 
           {/* CTA */}
-          <button onClick={() => navigate("/services")} className="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold py-2.5 rounded-xl transition-colors shadow-sm">
+          <button onClick={() => navigate("/quotation")} className="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold py-2.5 rounded-xl transition-colors shadow-sm">
             Đặt thuê container →
           </button>
         </div>
