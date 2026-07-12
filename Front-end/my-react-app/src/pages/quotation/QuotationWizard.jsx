@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from "react";
-import {Ship, Package, Calendar, Check, ChevronLeft, ChevronRight, Plus, Minus, FileText} from "lucide-react";
+import { Ship, Package, Calendar, Check, ChevronLeft, ChevronRight, Plus, Minus, FileText } from "lucide-react";
 import CONTAINERS from "../../assets/containers";
 import ContainerRouteFields from "./ContainerRouteFields";
 import ErrorBoundary from "./ErrorBoundary";
@@ -7,6 +7,7 @@ import { useQuotation } from "../../context/QuotationContext"
 import Step1_Quotation from "./Step1_Quotation";
 import Step2_Quotation from "./Step2_Quotation";
 import Step3_Quotation from "./Step3_Quotation";
+import Navigation from "../../components/Navigation";
 const { CATEGORIES, SIZES, PRESET_COLORS, CONTAINER_SIZES, OWNER_COMPANIES } = CONTAINERS;
 const STEPS = ["Hàng hoá", "Tuyến đường", "Xem lại & xác nhận"];
 
@@ -21,6 +22,7 @@ const emptyItem = () => ({
   distant: 0, // filled in by RouteMap once a route is calculated
   pickup_date: "",
   notes: "",
+  cargo_type: "",
 });
 
 function QuotationWizardInner() {
@@ -34,10 +36,9 @@ function QuotationWizardInner() {
   const [step2Valid, setStep2Valid] = useState(false);
   const userId = localStorage.getItem("id");
   const token = localStorage.getItem("token");
+  const { step, handleUpdateStep } = useQuotation();
 
-  const {step, handleUpdateStep} = useQuotation();
-
-
+// Fetch customer data from the API when the component mounts
   const fetchCustomer = async () => {
     try {
       const response = await fetch(`http://localhost:9001/api/v1/customers/${userId}`, {
@@ -51,10 +52,61 @@ function QuotationWizardInner() {
       setCustomer({}); // keep it a safe object so customer.xxx never throws
     }
   };
-
   useEffect(() => {
     fetchCustomer();
   }, []);
+
+  // Format items for the API request
+  const formattedItems = items.map((item) => ({
+    weight: item.weight,
+    distant: item.distant,
+    cargo_type: item.cargo_type,
+    delivery_address: item.delivery_location.address,
+    delivery_lat: item.delivery_location.lat,
+    delivery_lng: item.delivery_location.lng,
+    pickup_address: item.pickup_location.address,
+    pickup_lat: item.pickup_location.lat,
+    pickup_lng: item.pickup_location.lng,
+    container_type: "FLAT_RACK",
+    size_ft: "FT40",
+    color: item.color,
+    owner_company: item.owner_company,
+    pickup_date: item.pickup_date,
+    notes: item.notes,
+  }));
+
+  // Format the quotation request payload for the API
+  const formatQuotationRequest = () => {
+
+    const quoteCode = "QT-2026-" + String(customer?.id || "0000").slice(-4).toUpperCase();
+    const totalPrice = priced.reduce((s, it) => s + it.unit_price, 0);
+    return {
+      quote_code: quoteCode,
+      total_price: totalPrice,
+      status: "SENT",
+      quotationItems: formattedItems,  
+    };
+  };
+
+  // Function to save the quotation to the API
+  const saveQuotation = async () => {
+    const payload = formatQuotationRequest();
+    try {
+      const response = await fetch(`http://localhost:9001/api/quotations?customer_id=${customer?.id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+      if (!response.ok) throw new Error("Failed to save quotation");
+      const data = await response.json();
+      console.log("Quotation saved successfully:", data);
+    } catch (error) {
+      console.error("Error saving quotation:", error);
+    }
+  }
 
   const setCountAndResize = (n) => {
     const next = Math.min(10, Math.max(1, n));
@@ -89,10 +141,6 @@ function QuotationWizardInner() {
   const basePrice = Math.round(totalPrice * 0.85);
   const quoteCode = "QT-2026-" + String(customer?.id || "0000").slice(-4).toUpperCase();
 
-
-
-
-
   const canNext = step === 1 ? step1Valid : step === 2 ? step2Valid : true;
 
   const fmt = (n) => n.toLocaleString("vi-VN") + " ₫";
@@ -106,16 +154,7 @@ function QuotationWizardInner() {
       `}</style>
 
       {/* Header */}
-      <div className="border-b border-[#EAEAEA] px-6 md:px-10 py-4 flex items-center justify-between sticky top-0 bg-[#F7F7F6]/95 backdrop-blur z-20">
-        <div className="flex items-center gap-2">
-          <Ship size={20} className="text-[#111318]" strokeWidth={1.75} />
-          <span className="font-display text-[17px] font-bold tracking-tight">OceanWings</span>
-        </div>
-        <p className="text-[13px] text-[#6B7280] hidden sm:block">Yêu cầu báo giá vận chuyển</p>
-        <div className="w-8 h-8 rounded-full bg-[#6C5CE7] text-white flex items-center justify-center text-[13px] font-medium">
-          U
-        </div>
-      </div>
+      <Navigation title="Báo giá vận chuyển" subtitle="Tạo báo giá mới" />
 
       {/* Stepper */}
       <div className="max-w-3xl mx-auto px-6 md:px-10 pt-7">
@@ -125,10 +164,10 @@ function QuotationWizardInner() {
               <div className="flex items-center gap-2.5">
                 <div
                   className={`w-7 h-7 rounded-full flex items-center justify-center text-[12px] font-mono border shrink-0 ${i < step
-                      ? "bg-[#6C5CE7] border-[#6C5CE7] text-white"
-                      : i === step
-                        ? "border-[#6C5CE7] text-[#6C5CE7]"
-                        : "border-[#E5E7EB] text-[#B0B4BC]"
+                    ? "bg-[#6C5CE7] border-[#6C5CE7] text-white"
+                    : i === step
+                      ? "border-[#6C5CE7] text-[#6C5CE7]"
+                      : "border-[#E5E7EB] text-[#B0B4BC]"
                     }`}
                 >
                   {i < step ? <Check size={13} /> : i + 1}
@@ -168,84 +207,15 @@ function QuotationWizardInner() {
           setStep2Valid={setStep2Valid}
           count={count}
         />
-
         {/* ---------------- STEP 3: Xem lại & xác nhận ---------------- */}
-        {/* {step === 3 && (
-          <>
-            <div>
-              <p className="text-[11px] uppercase tracking-wider text-[#9CA3AF] mb-3 font-medium">Chi tiết từng container / giá</p>
-              <div className="space-y-3">
-                {priced.map((it, idx) => (
-                  <div key={idx} className="border border-[#EAEAEA] rounded-xl bg-[#FAFAF9] p-4 flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-9 h-9 rounded-lg bg-white border border-[#EAEAEA] flex items-center justify-center shrink-0">
-                        <Package size={15} className="text-[#6C5CE7]" />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-[13px] font-medium">
-                          {it.container_type} · {it.size_ft.replace("Size", "")}
-                        </p>
-                        <p className="text-[12px] text-[#9CA3AF] truncate">
-                          {it.pickup_location?.address || "—"} → {it.delivery_location?.address || "—"}
-                        </p>
-                        <p className="text-[11px] font-mono text-[#B0B4BC]">
-                          {Number(it.weight || 0).toLocaleString("vi-VN")} kg · {it.distant.toLocaleString("vi-VN")} km · {it.pickup_date}
-                        </p>
-                      </div>
-                    </div>
-                    <span className="font-mono text-[14px] shrink-0">{fmt(it.unit_price)}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <p className="text-[11px] uppercase tracking-wider text-[#9CA3AF] mb-3 font-medium">Thông tin báo giá</p>
-              <div className="border border-[#6C5CE7]/30 rounded-xl bg-[#FAFAF9] divide-y divide-[#EAEAEA]">
-                <div className="flex items-center justify-between px-5 py-3">
-                  <span className="text-[13px] text-[#9CA3AF] flex items-center gap-1.5"><FileText size={13} /> Mã báo giá</span>
-                  <span className="font-mono text-[13px]">{quoteCode}</span>
-                </div>
-                <div className="flex items-center justify-between px-5 py-3">
-                  <span className="text-[13px] text-[#9CA3AF]">Loại hàng</span>
-                  <span className="text-[13px]">{cargoType || "—"}</span>
-                </div>
-                <div className="flex items-center justify-between px-5 py-3.5">
-                  <span className="text-[13px] text-[#9CA3AF]">Giá cơ bản</span>
-                  <span className="font-mono text-[14px]">{fmt(basePrice)}</span>
-                </div>
-                <div className="flex items-center justify-between px-5 py-3.5">
-                  <span className="text-[13px] text-[#9CA3AF]">Phụ phí ({items.length} container)</span>
-                  <span className="font-mono text-[14px]">{fmt(totalPrice - basePrice)}</span>
-                </div>
-                <div className="flex items-center justify-between px-5 py-4 bg-white rounded-b-xl">
-                  <span className="text-[14px] font-medium">Tổng cộng</span>
-                  <span className="font-mono text-[20px] font-semibold text-[#6C5CE7]">{fmt(totalPrice)}</span>
-                </div>
-                <div className="flex items-center justify-between px-5 py-3">
-                  <span className="text-[12px] text-[#9CA3AF]">Trạng thái</span>
-                  <span
-                    className={`text-[11px] font-mono px-2 py-0.5 rounded-full border ${status === "AVAILABLE" || status === "DRAFT"
-                        ? "border-[#B0B4BC] text-[#6B7280]"
-                        : "border-[#6C5CE7] text-[#6C5CE7]"
-                      }`}
-                  >
-                    {status}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </>
-        )} */}
         <Step3_Quotation
           step={step}
           items={items}
           setItems={setItems}
           updateItem={updateItem}
           emptyItem={emptyItem}
-          setStep3Valid={() => {}}
+          setStep3Valid={() => { }}
           quoteCode={quoteCode}
-          cargoType={cargoType}
           basePrice={basePrice}
           totalPrice={totalPrice}
           status={status}
@@ -275,9 +245,10 @@ function QuotationWizardInner() {
             </button>
           ) : (
             <button
-              onClick={() => setStatus("SENT")}
-              disabled={status === "SENT"}
+              onClick={() => setStatus("ACCEPTED")}
+              disabled={status === "ACCEPTED"}
               className="px-5 py-2.5 rounded-lg bg-[#22A06B] text-white text-[13px] font-medium hover:bg-[#1C8A5C] transition disabled:opacity-60 flex items-center gap-1.5"
+              onClick={saveQuotation}
             >
               <Check size={15} /> {status === "SENT" ? "Đã gửi yêu cầu" : "Xác nhận & gửi báo giá"}
             </button>

@@ -8,7 +8,7 @@ public enum ErrorCode {
     NOT_FOUND(102, "Account not found", HttpStatus.NOT_FOUND),
     INVALID_REQUEST(103, "Invalid request", HttpStatus.BAD_REQUEST),
     CANNOT_LOAD_DATA(104, "Cannot load data", HttpStatus.BAD_REQUEST),
-    ;
+    CUSTOMER_NOT_FOUND(105, "Cannot find customer by id", HttpStatus.BAD_REQUEST ),;
     private int code;
     private String message;
     private HttpStatus httpStatus;
