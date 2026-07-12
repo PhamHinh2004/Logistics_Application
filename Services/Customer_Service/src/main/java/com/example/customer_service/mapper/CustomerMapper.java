@@ -13,6 +13,7 @@ public interface CustomerMapper {
     @Mapping(target = "updated_At", ignore = true)
     @Mapping(target = "quotations", ignore = true)
     @Mapping(target = "gender", ignore = true)
+    @Mapping(target = "userId", source = "userId")
     Customer toCustomer(CustomerRequest customerRequest);
 
     CustomerResponse toCustomerResponse(Customer customer);

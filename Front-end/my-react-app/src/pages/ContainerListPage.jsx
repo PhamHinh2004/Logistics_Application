@@ -89,12 +89,20 @@ export default function ContainerListPage() {
                             {filteredContainers.length} / {containers.length} container
                         </p>
                     </div>
-                    <button
-                        onClick={() => navigate("/demo")}
-                        className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-xl transition"
-                    >
-                        Demo
-                    </button>
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={() => navigate("/quotation")}
+                            className="bg-[#6C5CE7] hover:bg-[#5A4BCF] text-white font-bold py-2 px-4 rounded-xl transition"
+                        >
+                            Tạo báo giá mới
+                        </button>
+                        <button
+                            onClick={() => navigate("/demo")}
+                            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-xl transition"
+                        >
+                            Demo
+                        </button>
+                    </div>
                 </div>
 
                 {/* FILTER BAR */}
