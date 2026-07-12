@@ -1,5 +1,7 @@
 package com.example.customer_service.dto.response;
 
+import com.example.customer_service.models.Customer;
+import com.example.customer_service.models.QuotationItem;
 import com.example.customer_service.models.StatusQuotation;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,6 +11,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -16,10 +19,7 @@ import java.util.Date;
 @Builder
 public class QuotationResponse {
     private String id;
-    private int quoteCode;
-    private String origin;
-    private String cargoType;
-    private double basePrice;
+    private String quoteCode;
     private double totalPrice;
     private StatusQuotation status;
     private LocalDateTime created_At;

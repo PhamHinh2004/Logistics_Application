@@ -20,10 +20,7 @@ public class Quotation {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
-    private int quoteCode;
-    private String origin;
-    private String cargoType;
-    private double basePrice;
+    private String quoteCode;
     private double totalPrice;
     @Enumerated(EnumType.STRING)
     private StatusQuotation status;
