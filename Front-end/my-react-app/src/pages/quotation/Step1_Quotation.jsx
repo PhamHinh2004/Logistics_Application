@@ -63,15 +63,7 @@ export default function Step1_Quotation({ step, handleUpdateStep, items, setItem
                         </div>
                     </div>
 
-                    <div>
-                        <p className="text-[11px] uppercase tracking-wider text-[#9CA3AF] mb-3 font-medium">Loại hàng hoá chung</p>
-                        <input
-                            value={cargoType}
-                            onChange={(e) => setCargoType(e.target.value)}
-                            placeholder="VD: Hàng đông lạnh - thuỷ sản xuất khẩu"
-                            className="w-full bg-white border border-[#E5E7EB] rounded-lg px-3 py-2.5 text-[14px] outline-none focus:border-[#6C5CE7] placeholder:text-[#B0B4BC]"
-                        />
-                    </div>
+
 
                     <div>
                         <p className="text-[11px] uppercase tracking-wider text-[#9CA3AF] mb-3 font-medium">Số lượng container</p>
@@ -97,7 +89,15 @@ export default function Step1_Quotation({ step, handleUpdateStep, items, setItem
                         {items.map((it, idx) => (
                             <div key={idx} className="border border-[#EAEAEA] rounded-xl bg-[#FAFAF9] p-5 space-y-4">
                                 <p className="text-[12px] font-mono text-[#9CA3AF]">Container #{idx + 1}</p>
-
+                                <div>
+                                    <p className="text-[11px] uppercase tracking-wider text-[#9CA3AF] mb-3 font-medium">Loại hàng hoá chung</p>
+                                    <input
+                                        value={it.cargo_type}
+                                        onChange={(e) => updateItem(idx, "cargo_type", e.target.value)}
+                                        placeholder="VD: Hàng đông lạnh - thuỷ sản xuất khẩu"
+                                        className="w-full bg-white border border-[#E5E7EB] rounded-lg px-3 py-2.5 text-[14px] outline-none focus:border-[#6C5CE7] placeholder:text-[#B0B4BC]"
+                                    />
+                                </div>
                                 <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
                                     {CATEGORIES.map((category) => (
                                         <button
