@@ -1,17 +1,13 @@
-package com.example.customer_service.dto.request;
+package com.example.customer_service.dto.request.create;
 
 import com.example.customer_service.models.ContainerType;
 import com.example.customer_service.models.SizeFt;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @Data
 @NoArgsConstructor

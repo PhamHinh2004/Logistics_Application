@@ -1,10 +1,9 @@
 package com.example.customer_service.controllers;
 
 import com.example.customer_service.dto.ApiResponseDto;
-import com.example.customer_service.dto.request.CustomerRequest;
+import com.example.customer_service.dto.request.create.CustomerRequest;
+import com.example.customer_service.dto.request.update.UpdateCustomerRequest;
 import com.example.customer_service.dto.response.CustomerResponse;
-import com.example.customer_service.models.Customer;
-import com.example.customer_service.repositories.CustomerRepository;
 import com.example.customer_service.services.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -34,5 +33,14 @@ public class CustomerController {
     public ResponseEntity<ApiResponseDto<CustomerResponse>> findCustomerById(@PathVariable String userId) {
         return ResponseEntity.ok(new ApiResponseDto<>("Customer retrieved successfully", "success", customerService.findCustomerByUserId(userId)));
     }
+
+    @PutMapping("/{userId}")
+    public ResponseEntity<ApiResponseDto<CustomerResponse>> updateCustomer(@PathVariable String userId, @RequestBody UpdateCustomerRequest customerRequest) {
+        // Call the service layer to update the customer
+        CustomerResponse customerResponse = customerService.updateCustomer(userId, customerRequest);
+        // Return the response with a success message
+        ApiResponseDto<CustomerResponse> response = new ApiResponseDto<>("Customer updated successfully", "success", customerResponse);
+        return ResponseEntity.ok(response);
+        }
 
 }

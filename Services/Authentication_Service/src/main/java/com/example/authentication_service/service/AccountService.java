@@ -168,4 +168,11 @@ public class AccountService {
         account.setRole(roleFactory.getInstance(role));
         return accountMapper.toAccountResponse(accountRepository.save(account));
     }
+
+    public AccountResponse updatePassword(Authentication authentication, String newPassword) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        Account account = accountRepository.findById(userDetails.getId()).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
+        account.setPassword(passwordEncoder.encode(newPassword));
+        return accountMapper.toAccountResponse(accountRepository.save(account));
+    }
 }

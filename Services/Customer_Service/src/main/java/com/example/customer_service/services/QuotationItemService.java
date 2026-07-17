@@ -1,16 +1,13 @@
 package com.example.customer_service.services;
 
-import com.example.customer_service.dto.request.QuotationItemRequest;
+import com.example.customer_service.dto.request.create.QuotationItemRequest;
 import com.example.customer_service.dto.response.QuotationItemResponse;
-import com.example.customer_service.dto.response.QuotationResponse;
 import com.example.customer_service.models.Quotation;
 import com.example.customer_service.models.QuotationItem;
 import com.example.customer_service.repositories.QuotationItemRepository;
 import com.example.customer_service.repositories.QuotationRepository;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDateTime;
 
