@@ -31,8 +31,35 @@ export function AuthProvider({ children }) {
         setUser(null);
     };
 
+    const refreshAuthToken = async () => {
+        const refreshToken = localStorage.getItem("refreshToken");
+        if (!refreshToken) {
+            logout();
+            return;
+        }
+        try {
+            const response = await fetch("http://localhost:8080/api/auth/refresh", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ refreshToken }),
+            });
+            if (!response.ok) {
+                throw new Error("Failed to refresh token");
+            }
+            const data = await response.json();
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("refreshToken", data.refreshToken);
+        }
+        catch (error) {
+            console.error("Error refreshing token:", error);
+            logout();
+        }
+    };
+
     return (
-        <AuthContext.Provider value={{ user, login, logout, loading }}>
+        <AuthContext.Provider value={{ user, login, logout, loading, refreshAuthToken }}>
             {children}
         </AuthContext.Provider>
     );
