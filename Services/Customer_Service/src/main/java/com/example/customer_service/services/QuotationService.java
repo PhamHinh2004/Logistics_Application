@@ -1,7 +1,6 @@
 package com.example.customer_service.services;
 
-import com.example.customer_service.dto.request.QuotationItemRequest;
-import com.example.customer_service.dto.request.QuotationRequest;
+import com.example.customer_service.dto.request.create.QuotationRequest;
 import com.example.customer_service.dto.response.QuotationResponse;
 import com.example.customer_service.exception.AppException;
 import com.example.customer_service.exception.ErrorCode;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

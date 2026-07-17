@@ -1,6 +1,7 @@
 package com.example.customer_service.services;
 
-import com.example.customer_service.dto.request.CustomerRequest;
+import com.example.customer_service.dto.request.create.CustomerRequest;
+import com.example.customer_service.dto.request.update.UpdateCustomerRequest;
 import com.example.customer_service.dto.response.CustomerResponse;
 import com.example.customer_service.exception.AppException;
 import com.example.customer_service.exception.ErrorCode;
@@ -13,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -58,6 +60,26 @@ public class CustomerService {
         Customer customer = customerRepository.findByUserId(userId);
         if (customer == null) {
             throw new AppException(ErrorCode.NOT_FOUND);
+        }
+        return customerMapper.toCustomerResponse(customer);
+    }
+
+    public CustomerResponse updateCustomer(String userId, UpdateCustomerRequest customerRequest) {
+        Customer customer = customerRepository.findByUserId(userId);
+        if (customer == null) {
+            throw new AppException(ErrorCode.NOT_FOUND);
+        }
+        customer.setUpdated_At(Date.from(new Date().toInstant()));
+        customer.setCompanyName(customerRequest.getCompanyName());
+        customer.setContactName(customerRequest.getContactName());
+        customer.setContactEmail(customerRequest.getContactEmail());
+        customer.setAddress(customerRequest.getAddress());
+        customer.setNote(customerRequest.getNote());
+        customer.setGender(handlingChangeGender(customerRequest.getGender()));
+        try{
+            customerRepository.save(customer);
+        }catch (Exception e) {
+            throw new AppException(ErrorCode.INVALID_REQUEST);
         }
         return customerMapper.toCustomerResponse(customer);
     }

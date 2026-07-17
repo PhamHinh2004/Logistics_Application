@@ -1,11 +1,9 @@
 package com.example.customer_service.controllers;
 
 import com.example.customer_service.dto.ApiResponseDto;
-import com.example.customer_service.dto.request.QuotationItemRequest;
-import com.example.customer_service.models.QuotationItem;
+import com.example.customer_service.dto.request.create.QuotationItemRequest;
 import com.example.customer_service.services.QuotationItemService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
