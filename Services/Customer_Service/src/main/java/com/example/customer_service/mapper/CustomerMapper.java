@@ -1,6 +1,6 @@
 package com.example.customer_service.mapper;
 
-import com.example.customer_service.dto.request.CustomerRequest;
+import com.example.customer_service.dto.request.create.CustomerRequest;
 import com.example.customer_service.dto.response.CustomerResponse;
 import com.example.customer_service.models.Customer;
 import org.mapstruct.Mapper;
