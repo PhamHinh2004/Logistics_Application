@@ -11,6 +11,7 @@ import ContainerConfigurator from './pages/ContainerConfigurator'
 import ContainerListPage from './pages/ContainerListPage'
 import QuotationWizard from './pages/quotation/QuotationWizard'
 import {QuotationProvider} from './context/QuotationContext'
+import MyAccountPage from './pages/myaccount/MyAccountPage'
 import './App.css'
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
             <QuotationWizard />
           </QuotationProvider>
         } />
+        <Route path="/my-account" element={<MyAccountPage />} />
       </Routes>
     </BrowserRouter>
   )

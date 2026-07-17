@@ -50,7 +50,7 @@ export default function Navigation() {
             {/* Dropdown */}
             {menuOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-lg py-2">
-                <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">My Account</a>
+                <a href="/my-account" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">My Account</a>
                 <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Settings</a>
                 <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Orders</a>
                 <div className="border-t border-gray-100 my-1" />

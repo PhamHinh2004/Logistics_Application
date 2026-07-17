@@ -2,6 +2,7 @@ package com.example.authentication_service.service;
 
 import com.example.authentication_service.exception.AppException;
 import com.example.authentication_service.exception.ErrorCode;
+import com.example.authentication_service.models.Account;
 import com.example.authentication_service.models.RefreshToken;
 import com.example.authentication_service.repository.AccountRepository;
 import com.example.authentication_service.repository.RefreshTokenRepository;
@@ -23,8 +24,10 @@ public class RefreshTokenService {
     private final AccountRepository accountRepository;
 
     public RefreshToken createRefreshToken(String accountId) {
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
         // Xóa refresh token cũ của account này trước khi tạo cái mới
-        refreshTokenRepository.deleteByAccount_Id(accountId);
+        refreshTokenRepository.deleteRefreshTokenByAccount(account);
 
         RefreshToken refreshToken = RefreshToken.builder()
                 .account(accountRepository.findById(accountId)

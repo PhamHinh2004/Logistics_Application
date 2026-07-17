@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/account")
 @RequiredArgsConstructor
@@ -30,7 +32,7 @@ public class AccountController {
     }
 
     @PostMapping("/auth/refresh-token")
-    public ResponseEntity<?> refreshToken(@RequestBody java.util.Map<String, String> request) {
+    public ResponseEntity<?> refreshToken(@RequestBody Map<String, String> request) {
         String refreshToken = request.get("refreshToken");
         if (refreshToken == null || refreshToken.isEmpty()) {
             return ResponseEntity.badRequest().body("Refresh token is required");
@@ -59,5 +61,10 @@ public class AccountController {
     @PatchMapping("/update-role")
     public ResponseEntity<ApiResponseDto<AccountResponse>> updateRole(Authentication authentication, @RequestParam String role){
         return ResponseEntity.ok(new ApiResponseDto<>("Update role", "success", accountService.updateRole(authentication, role)));
+    }
+
+    @PatchMapping("/update-password")
+    public ResponseEntity<ApiResponseDto<AccountResponse>> updatePassword(Authentication authentication, @RequestParam String newPassword){
+        return ResponseEntity.ok(new ApiResponseDto<>("Update password", "success", accountService.updatePassword(authentication, newPassword)));
     }
 }
