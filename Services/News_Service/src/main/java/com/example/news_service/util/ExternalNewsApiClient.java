@@ -31,18 +31,17 @@ public class ExternalNewsApiClient {
         this.redisTemplate = redisTemplate;
     }
     public Mono<String> fetchNews(Set<String> preferences) {
-        String query = "logistics+container"; 
-        String cacheKey = "news:fetchNews:default";
+        String query = "logistics+container";
+        String cacheKey = "news:fetchNews:vi";
 
         return redisTemplate.opsForValue().get(cacheKey)
                 .switchIfEmpty(
                         webClient.get()
                                 .uri(uriBuilder -> uriBuilder
-                                        .path("/search") // Dùng search thay vì top-headlines để có thể gửi param q
-                                        .queryParam("q", query)
-                                        .queryParam("lang","vi")
-                                        .queryParam("max","20")
-                                        .queryParam("country","vn")
+                                        .path("/top-headlines")
+                                        .queryParam("q", "logistics+container")
+                                        .queryParam("lang", "vi")
+                                        .queryParam("max", 10)
                                         .queryParam("apikey", apiKey)
                                         .build())
                                 .retrieve()
