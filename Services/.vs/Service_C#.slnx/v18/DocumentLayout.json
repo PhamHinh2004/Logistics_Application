@@ -1,0 +1,64 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\PhamV.Hinh\\Logistics_Application\\Services\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{142621AC-1784-5B2D-9946-97013F437DB9}|Fleet_Service\\Fleet_Service.csproj|d:\\phamv.hinh\\logistics_application\\services\\fleet_service\\services\\containerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{142621AC-1784-5B2D-9946-97013F437DB9}|Fleet_Service\\Fleet_Service.csproj|solutionrelative:fleet_service\\services\\containerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{142621AC-1784-5B2D-9946-97013F437DB9}|Fleet_Service\\Fleet_Service.csproj|d:\\phamv.hinh\\logistics_application\\services\\fleet_service\\controllers\\containercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{142621AC-1784-5B2D-9946-97013F437DB9}|Fleet_Service\\Fleet_Service.csproj|solutionrelative:fleet_service\\controllers\\containercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 1,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedHeight": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ContainerController.cs",
+              "DocumentMoniker": "D:\\PhamV.Hinh\\Logistics_Application\\Services\\Fleet_Service\\Controllers\\ContainerController.cs",
+              "RelativeDocumentMoniker": "Fleet_Service\\Controllers\\ContainerController.cs",
+              "ToolTip": "D:\\PhamV.Hinh\\Logistics_Application\\Services\\Fleet_Service\\Controllers\\ContainerController.cs",
+              "RelativeToolTip": "Fleet_Service\\Controllers\\ContainerController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEkAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-07T16:06:27.833Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ContainerService.cs",
+              "DocumentMoniker": "D:\\PhamV.Hinh\\Logistics_Application\\Services\\Fleet_Service\\Services\\ContainerService.cs",
+              "RelativeDocumentMoniker": "Fleet_Service\\Services\\ContainerService.cs",
+              "ToolTip": "D:\\PhamV.Hinh\\Logistics_Application\\Services\\Fleet_Service\\Services\\ContainerService.cs",
+              "RelativeToolTip": "Fleet_Service\\Services\\ContainerService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAhAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-07T15:49:37.786Z",
+              "EditorCaption": ""
+            }
+          ]
+        },
+        {
+          "DockedHeight": 200,
+          "SelectedChildIndex": -1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:1:0:{d212f56b-c48a-434c-a121-1c5d80b59b9f}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
