@@ -1,0 +1,31 @@
+﻿using Fleet_Service.Enums;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using System.ComponentModel.DataAnnotations;
+
+namespace Fleet_Service.Models
+{   
+    public class Vehicle
+    {
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string? Id { get; set; }
+        [BsonElement]
+        public string PlateNumber { get; set; } = string.Empty;
+        [BsonElement]
+        public VehicleType VehicleType { get; set; }
+        [BsonElement]
+        public decimal CapacityKg { get; set; }
+        [BsonElement]
+        public VehicleStatus Status { get; set; }
+        [BsonElement]
+        public decimal CurrentLat { get; set; }
+        [BsonElement]
+        public decimal CurrentLng { get; set; }
+        [BsonElement]
+        public DateTime LastLocationAt { get; set; }
+        [BsonElement]
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    }
+}

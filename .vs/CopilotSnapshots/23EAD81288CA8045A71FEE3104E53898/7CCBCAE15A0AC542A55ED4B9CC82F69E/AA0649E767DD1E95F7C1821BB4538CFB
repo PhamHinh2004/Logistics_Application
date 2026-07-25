@@ -1,0 +1,6 @@
+﻿namespace Fleet_Service.Data
+{
+    public class MongoDbContext
+    {
+    }
+}

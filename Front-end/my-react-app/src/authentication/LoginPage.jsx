@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-
+import { useAuth } from "../context/Authcontext";
+import { useNavigate } from "react-router-dom";
 // ─── SVG Illustration (reuse warehouse) ──────────────────────────────────────
 const WarehouseIllustration = () => (
   <svg viewBox="0 0 340 280" fill="none" xmlns="http://www.w3.org/2000/svg"
@@ -79,6 +80,8 @@ function LoginPage() {
   const [exitedusername, setExitedUsername] = useState({ valid: null, message: "" });
   const [existedPassword, setExistedPassword] = useState({ valid: null, message: "" });
   const [errors, setErrors] = useState({ username: "", password: "" });
+  const { user, login } = useAuth();
+  const navigate = useNavigate();
 
   const checkUsernameAvailability = async (username) => {
     if (username.trim() === "") {
@@ -112,12 +115,46 @@ function LoginPage() {
     }
   };
 
+  const checkEmailAvailability = async (email) => {
+    if (email.trim() === "") {
+      setExitedUsername({ valid: null, message: "Vui lòng nhập email" });
+      return;
+    } // Skip empty email
+
+    const url = `http://localhost:9000/account/check-email?email=${encodeURIComponent(email)}`;
+    try {
+      const response = await fetch(url);
+      if (response.ok) {
+        const data = await response.json();
+        if (!data.response) {
+          setExitedUsername({
+            valid: false,
+            message: " ❌ Email không tồn tại",
+          });
+        }
+        else {
+          setExitedUsername({
+            valid: true,
+            message: " ✅ Email đã tồn tại",
+          });
+        }
+        console.log(`Email "${email}" availability:`, data.response);
+      }
+    } catch (error) {
+      setExitedUsername({
+        valid: false,
+        message: "Không thể kiểm tra email",
+      });
+    }
+  };
+
   useEffect(() => {
     checkUsernameAvailability(form.username);
   }, [form.username]);
 
-  
-    
+  useEffect(() => {
+    checkEmailAvailability(form.email);
+  }, [form.email]);
 
   const set = (field) => (e) =>
     setForm((prev) => ({ ...prev, [field]: e.target.value }));
@@ -129,8 +166,8 @@ function LoginPage() {
     setApiError("");
     setExitedUsername({ valid: null, message: "" });
     setExistedPassword({ valid: null, message: "" });
-    
-    const url  = "http://localhost:9000/account/auth/login";
+
+    const url = "http://localhost:9000/account/auth/login";
     try {
       const response = await fetch(url, {
         method: "POST",
@@ -140,6 +177,9 @@ function LoginPage() {
       if (response.ok) {
         const data = await response.json();
         alert("Đăng nhập thành công!");
+        // Lưu token vào localStorage hoặc sessionStorage
+        login(data, data.accessToken, data.refreshToken);
+        navigate("/"); // Chuyển hướng người dùng đến trang chính hoặc trang mong muốn
       } else {
         const errorData = await response.json();
         setApiError(errorData.message || "Đăng nhập thất bại!");
@@ -150,7 +190,7 @@ function LoginPage() {
   };
 
   const handleSubmit = async () => {
-    if(form.password.trim() === ""){
+    if (form.password.trim() === "") {
       setExistedPassword({ valid: false, message: "Vui lòng nhập password" });
       return;
     }
@@ -218,9 +258,8 @@ function LoginPage() {
                   : "bg-[#eaeaec] border border-transparent"}`}
             />
             {exitedusername.message && (
-              <p className={`text-xs mt-1.5 ${
-                exitedusername.valid === false ? "text-red-500" : "text-green-500"
-              }`}>
+              <p className={`text-xs mt-1.5 ${exitedusername.valid === false ? "text-red-500" : "text-green-500"
+                }`}>
                 {exitedusername.message}
               </p>
             )}
@@ -303,7 +342,8 @@ function LoginPage() {
 
           {/* Social login */}
           <div className="grid grid-cols-2 gap-3">
-            <button className="flex items-center justify-center gap-2.5 h-11 rounded-xl
+            <button onClick={() => window.location.href = "http://localhost:9000/oauth2/authorization/google"}
+              className="flex items-center justify-center gap-2.5 h-11 rounded-xl
                                bg-[#eaeaec] hover:bg-gray-200 transition-colors text-[13px]
                                text-gray-600 font-medium border border-transparent
                                hover:border-gray-300">
@@ -324,7 +364,8 @@ function LoginPage() {
               Google
             </button>
 
-            <button className="flex items-center justify-center gap-2.5 h-11 rounded-xl
+            <button onClick={() => window.location.href = "http://localhost:9000/oauth2/authorization/github"}
+              className="flex items-center justify-center gap-2.5 h-11 rounded-xl
                                bg-[#eaeaec] hover:bg-gray-200 transition-colors text-[13px]
                                text-gray-600 font-medium border border-transparent
                                hover:border-gray-300">
