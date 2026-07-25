@@ -1,0 +1,15 @@
+server:
+  port: 9003
+spring:
+  data:
+    redis:
+      host: redis
+      port: 6379
+eureka:
+  client:
+    service-url:
+      defaultZone: http://discovery-service:8061/eureka
+gnews:
+  api:
+    key: 825313cfafa1ba60727dcfe81725bac8
+    url: https://gnews.io/api/v4
