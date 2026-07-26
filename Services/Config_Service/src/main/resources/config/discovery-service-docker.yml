@@ -21,3 +21,9 @@ management:
   tracing:
     sampling:
       probability: 1.0
+  web:
+    exposure:
+      include: health
+  endpoint:
+    health:
+      show-details: never
