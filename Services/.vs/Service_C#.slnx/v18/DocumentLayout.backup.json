@@ -3,12 +3,24 @@
   "WorkspaceRootPath": "D:\\PhamV.Hinh\\Logistics_Application\\Services\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{142621AC-1784-5B2D-9946-97013F437DB9}|Fleet_Service\\Fleet_Service.csproj|d:\\phamv.hinh\\logistics_application\\services\\fleet_service\\services\\containerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{142621AC-1784-5B2D-9946-97013F437DB9}|Fleet_Service\\Fleet_Service.csproj|solutionrelative:fleet_service\\services\\containerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{142621AC-1784-5B2D-9946-97013F437DB9}|Fleet_Service\\Fleet_Service.csproj|d:\\phamv.hinh\\logistics_application\\services\\fleet_service\\controllers\\containercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{142621AC-1784-5B2D-9946-97013F437DB9}|Fleet_Service\\Fleet_Service.csproj|solutionrelative:fleet_service\\controllers\\containercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{142621AC-1784-5B2D-9946-97013F437DB9}|Fleet_Service\\Fleet_Service.csproj|d:\\phamv.hinh\\logistics_application\\services\\fleet_service\\controllers\\drivercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{142621AC-1784-5B2D-9946-97013F437DB9}|Fleet_Service\\Fleet_Service.csproj|solutionrelative:fleet_service\\controllers\\drivercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{142621AC-1784-5B2D-9946-97013F437DB9}|Fleet_Service\\Fleet_Service.csproj|d:\\phamv.hinh\\logistics_application\\services\\fleet_service\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{142621AC-1784-5B2D-9946-97013F437DB9}|Fleet_Service\\Fleet_Service.csproj|solutionrelative:fleet_service\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{142621AC-1784-5B2D-9946-97013F437DB9}|Fleet_Service\\Fleet_Service.csproj|d:\\phamv.hinh\\logistics_application\\services\\fleet_service\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{142621AC-1784-5B2D-9946-97013F437DB9}|Fleet_Service\\Fleet_Service.csproj|solutionrelative:fleet_service\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{142621AC-1784-5B2D-9946-97013F437DB9}|Fleet_Service\\Fleet_Service.csproj|d:\\phamv.hinh\\logistics_application\\services\\fleet_service\\services\\containerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{142621AC-1784-5B2D-9946-97013F437DB9}|Fleet_Service\\Fleet_Service.csproj|solutionrelative:fleet_service\\services\\containerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -23,25 +35,64 @@
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "ContainerController.cs",
-              "DocumentMoniker": "D:\\PhamV.Hinh\\Logistics_Application\\Services\\Fleet_Service\\Controllers\\ContainerController.cs",
-              "RelativeDocumentMoniker": "Fleet_Service\\Controllers\\ContainerController.cs",
-              "ToolTip": "D:\\PhamV.Hinh\\Logistics_Application\\Services\\Fleet_Service\\Controllers\\ContainerController.cs",
-              "RelativeToolTip": "Fleet_Service\\Controllers\\ContainerController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEkAAAABAAAAAAAAAA==",
+              "Title": "DriverController.cs",
+              "DocumentMoniker": "D:\\PhamV.Hinh\\Logistics_Application\\Services\\Fleet_Service\\Controllers\\DriverController.cs",
+              "RelativeDocumentMoniker": "Fleet_Service\\Controllers\\DriverController.cs",
+              "ToolTip": "D:\\PhamV.Hinh\\Logistics_Application\\Services\\Fleet_Service\\Controllers\\DriverController.cs",
+              "RelativeToolTip": "Fleet_Service\\Controllers\\DriverController.cs",
+              "ViewState": "AgIAAA0AAAAAAAAAAAAQwBkAAAA1AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-07T16:06:27.833Z",
+              "WhenOpened": "2026-07-27T08:50:25.86Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "ContainerController.cs",
+              "DocumentMoniker": "D:\\PhamV.Hinh\\Logistics_Application\\Services\\Fleet_Service\\Controllers\\ContainerController.cs",
+              "RelativeDocumentMoniker": "Fleet_Service\\Controllers\\ContainerController.cs",
+              "ToolTip": "D:\\PhamV.Hinh\\Logistics_Application\\Services\\Fleet_Service\\Controllers\\ContainerController.cs",
+              "RelativeToolTip": "Fleet_Service\\Controllers\\ContainerController.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAABgAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-27T08:50:05.185Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "D:\\PhamV.Hinh\\Logistics_Application\\Services\\Fleet_Service\\appsettings.json",
+              "RelativeDocumentMoniker": "Fleet_Service\\appsettings.json",
+              "ToolTip": "D:\\PhamV.Hinh\\Logistics_Application\\Services\\Fleet_Service\\appsettings.json",
+              "RelativeToolTip": "Fleet_Service\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-07-27T08:06:28.757Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\PhamV.Hinh\\Logistics_Application\\Services\\Fleet_Service\\Program.cs",
+              "RelativeDocumentMoniker": "Fleet_Service\\Program.cs",
+              "ToolTip": "D:\\PhamV.Hinh\\Logistics_Application\\Services\\Fleet_Service\\Program.cs",
+              "RelativeToolTip": "Fleet_Service\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAC8AAAAkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-27T07:47:34.524Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
               "Title": "ContainerService.cs",
               "DocumentMoniker": "D:\\PhamV.Hinh\\Logistics_Application\\Services\\Fleet_Service\\Services\\ContainerService.cs",
               "RelativeDocumentMoniker": "Fleet_Service\\Services\\ContainerService.cs",
               "ToolTip": "D:\\PhamV.Hinh\\Logistics_Application\\Services\\Fleet_Service\\Services\\ContainerService.cs",
               "RelativeToolTip": "Fleet_Service\\Services\\ContainerService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAC8AAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAABAAAAAAAAAAAAAQwB4AAABEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-07-07T15:49:37.786Z",
               "EditorCaption": ""
