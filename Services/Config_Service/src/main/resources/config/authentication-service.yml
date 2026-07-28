@@ -29,7 +29,6 @@ server:
 app:
   jwtSecret: aEgC6orb0GXD2sQwg2Vn3aTiVqmDMUtset7wi8mFJcY
   jwtExpirationMs: 86400000
-<<<<<<< HEAD
 management:
   endpoints:
     web:
@@ -38,5 +37,3 @@ management:
   endpoint:
     health:
       show-details: never
-=======
->>>>>>> origin/develop
