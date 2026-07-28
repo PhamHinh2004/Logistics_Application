@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Fleet_Service")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cfafab56ab10076181c7a5130f76c84fc924c3b2")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+41cc8491a9a7459df3345e26e45ada693c69851a")]
 [assembly: System.Reflection.AssemblyProductAttribute("Fleet_Service")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Fleet_Service")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
