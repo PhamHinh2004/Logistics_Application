@@ -1,8 +1,14 @@
 spring:
   datasource:
+<<<<<<< HEAD
+    url: jdbc:mysql://mysql-2f647711-hinh-deeb.e.aivencloud.com:15123/customer_service?sslMode=REQUIRED
+    username: ${AIVEN_USER}
+    password: ${AIVEN_PASSWORD}
+=======
     url: jdbc:mysql://mysql-server:3306/customer_service
     username: customer_service
     password: customer_service
+>>>>>>> origin/develop
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
@@ -18,3 +24,11 @@ eureka:
       defaultZone: http://discovery-service:8061/eureka
 server:
   port: 9001
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never

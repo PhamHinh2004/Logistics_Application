@@ -1,41 +1,23 @@
 services:
-  mongodb:
-    image: mongodb/mongodb-community-server:latest
-    container_name: mongodb
-    ports:
-      - "27017:27017"
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: authentication_service
-      MONGO_INITDB_ROOT_PASSWORD: mongo123
-  mysql-db:
-    image: mysql:8.0
-    container_name: mysql_server
-    environment:
-      MYSQL_ROOT_PASSWORD: customer_service
-      MYSQL_DATABASE: customer_service
-      MYSQL_USER: customer_service
-      MYSQL_PASSWORD: customer_service
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-
   redis:
     image: redis/redis-stack:latest
     container_name: redis
     ports:
       - "6379:6379"
       - "8001:8001"
+    volumes:
+      - redis-data:/data
 
   config-service:
     build:
       context: ./Config_Service
     container_name: config-service
+    env_file:
+      - .env
     ports:
       - "8088:8088"
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8088/discovery-service/default || bash -c '</dev/tcp/127.0.0.1/8088' || exit 1"]
+      test: ["CMD-SHELL", "curl -f http://localhost:8088/discovery-service/default || exit 1"]
       interval: 5s
       timeout: 3s
       retries: 12
@@ -49,6 +31,11 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - CONFIG_SERVER_URL=http://config-service:8088
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8061/actuator/health || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
     depends_on:
       config-service:
         condition: service_healthy
@@ -66,9 +53,7 @@ services:
       config-service:
         condition: service_healthy
       discovery-service:
-        condition: service_started
-      mongodb:
-        condition: service_started
+        condition: service_healthy
       redis:
         condition: service_started
 
@@ -85,9 +70,7 @@ services:
       config-service:
         condition: service_healthy
       discovery-service:
-        condition: service_started
-      mysql-db:
-        condition: service_started
+        condition: service_healthy
 
   api-gateway-service:
     build:
@@ -102,8 +85,35 @@ services:
       config-service:
         condition: service_healthy
       discovery-service:
+        condition: service_healthy
+
+  fleet-service:
+    build:
+      context: ./Fleet_Service
+    container_name: fleet-service
+    ports:
+      - "9002:9002"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=9002
+    depends_on:
+      discovery-service:
         condition: service_started
+
+  news-service:
+    build:
+      context: ./News_Service
+    container_name: news-service
+    ports:
+      - "9003:9003"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - CONFIG_SERVER_URL=http://config-service:8088
+    depends_on:
+      config-service:
+        condition: service_healthy
+      discovery-service:
+        condition: service_healthy
+
 volumes:
-  mongodb:
   redis-data:
-  mysql_data:
