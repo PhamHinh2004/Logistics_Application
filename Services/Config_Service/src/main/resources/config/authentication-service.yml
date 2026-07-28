@@ -1,7 +1,7 @@
 spring:
   data:
     mongodb:
-      uri: mongodb://authentication_service:mongo123@localhost:27017/authentication_service?authSource=admin
+      uri: mongodb+srv://20102004hinh_db_user:ZgHZZxMA4YsmKxx0@logistic-application.hv6w0bm.mongodb.net/authentication_service?appName=Logistic-Application&tls=true&tlsInsecure=false
     redis:
       host: localhost
       port: 6379
@@ -29,11 +29,3 @@ server:
 app:
   jwtSecret: aEgC6orb0GXD2sQwg2Vn3aTiVqmDMUtset7wi8mFJcY
   jwtExpirationMs: 86400000
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health
-  endpoint:
-    health:
-      show-details: never
