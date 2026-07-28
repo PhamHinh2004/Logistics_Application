@@ -11,13 +11,5 @@ eureka:
       defaultZone: http://localhost:8061/eureka
 gnews:
   api:
-    key: 825313cfafa1ba60727dcfe81725bac8
+    key: ${GNEWS_API_KEY}
     url: https://gnews.io/api/v4
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health
-  endpoint:
-    health:
-      show-details: never
