@@ -2,26 +2,31 @@ spring:
   data:
     mongodb:
       uri: mongodb+srv://20102004hinh_db_user:ZgHZZxMA4YsmKxx0@logistic-application.hv6w0bm.mongodb.net/authentication_service?appName=Logistic-Application&tls=true&tlsInsecure=false
+
     redis:
-      host: localhost
-      port: 6379
+      uri: rediss://default:gQAAAAAAAsEVAAIgcDJjNTk5Y2RkODE1Mzk0ZWJmOWFlNWNlYjZkMWI0NzBmMA@related-louse-180501.upstash.io:6379
+
   security:
     oauth2:
       client:
         registration:
           google:
-            client-id:  {{GOOGLE_CLIENT_ID}}
-            client-secret: {{GOOGLE_CLIENT_SECRET}}
-            scope: email, profile
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - email
+              - profile
+
           github:
-            client-id:  {{GITHUB_CLIENT_ID}}
-            client-secret: {{GITHUB_CLIENT_SECRET}}
-            scope: user:email
+            client-id: ${GITHUB_CLIENT_ID}
+            client-secret: ${GITHUB_CLIENT_SECRET}
+            scope:
+              - user:email
+
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8061/eureka
-
+      defaultZone: ${EUREKA_SERVER_URL:http://localhost:8061/eureka}
 
 server:
   port: 9000
