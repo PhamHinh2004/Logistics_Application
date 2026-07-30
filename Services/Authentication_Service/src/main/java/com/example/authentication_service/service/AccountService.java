@@ -42,17 +42,16 @@ public class AccountService {
     private final RoleFactory roleFactory;
     private final AuthenticationManager authenticationManager;
     private final JwtUtils  jwtUtils;
-    private final RedisBloomFilterService redisBloomFilterService;
     private final RefreshTokenService refreshTokenService;
     private final RefreshTokenRepository refreshTokenRepository;
 
 
     @Transactional
     public ResponseEntity<?> signUp(AccountSignUp accountSignUp) throws AppException, RoleNotFoundException, UserAlreadyExistsException {
-        if (redisBloomFilterService.mightExistUsername(accountSignUp.getUsername()) && accountRepository.existsByUsername(accountSignUp.getUsername())) {
+        if (accountRepository.existsByUsername(accountSignUp.getUsername())) {
             throw new UserAlreadyExistsException("Username is already taken!");
         }
-        else if (redisBloomFilterService.mightExistEmail(accountSignUp.getEmail()) && accountRepository.existsByEmail(accountSignUp.getEmail())) {
+        else if (accountRepository.existsByEmail(accountSignUp.getEmail())) {
             throw new UserAlreadyExistsException("Email is already in use!");
         }
         Account account = accountMapper.toAccountFromSignUp(accountSignUp);
@@ -62,8 +61,6 @@ public class AccountService {
         account.setRole(roleFactory.getInstance(accountSignUp.getRole() != null ? accountSignUp.getRole() : "user"));
 
         accountRepository.save(account);
-        redisBloomFilterService.addUsername(accountSignUp.getUsername());
-        redisBloomFilterService.addEmail(accountSignUp.getEmail());
         return ResponseEntity.ok("User registered successfully!");
     }
 
@@ -121,32 +118,12 @@ public class AccountService {
                 .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
     }
 
-    @PostConstruct
-    public void warmUp() {
-
-        List<Account> accounts = accountRepository.findAllProjectedBy();
-
-        redisBloomFilterService.addAllUsernames(
-                accounts.stream()
-                        .map(Account::getUsername)
-                        .filter(Objects::nonNull)
-                        .toList()
-        );
-
-        redisBloomFilterService.addAllEmails(
-                accounts.stream()
-                        .map(Account::getEmail)
-                        .filter(Objects::nonNull)
-                        .toList()
-        );
-    }
-
     public boolean checkExistUsername(String username){
-        return redisBloomFilterService.mightExistUsername(username) && accountRepository.existsByUsername(username);
+        return accountRepository.existsByUsername(username);
     }
 
     public boolean checkExistEmail(String email){
-        return redisBloomFilterService.mightExistEmail(email) && accountRepository.existsByEmail(email);
+        return accountRepository.existsByEmail(email);
     }
 
     public AccountResponse getAccount(Authentication authentication) {
