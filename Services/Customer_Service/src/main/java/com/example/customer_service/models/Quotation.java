@@ -27,8 +27,9 @@ public class Quotation {
     private LocalDateTime created_At;
     private LocalDateTime updated_At;
     private LocalDateTime valid_at;
-    @ManyToOne
-    @JoinColumn(name = "customer_id", referencedColumnName = "id")
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id")
     private Customer customer;
 
     @OneToMany(mappedBy = "quotation", cascade = CascadeType.ALL, orphanRemoval = true)

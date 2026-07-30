@@ -36,6 +36,11 @@ public class Customer {
     private String userId;
     @Enumerated(EnumType.STRING)
     private Gender gender;
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(
+            mappedBy = "customer",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     private List<Quotation> quotations;
 }
