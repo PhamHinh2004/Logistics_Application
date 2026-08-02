@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "wFxGET5K/TQ=",
+  "dgSpecHash": "9Wj4nwud42U=",
   "success": true,
-  "projectFilePath": "D:\\PhamV.Hinh\\Logistics_Application\\Services\\Fleet_Service\\Fleet_Service.csproj",
+  "projectFilePath": "D:\\PhamV.Hinh\\Logistics_Application\\Services\\Fleet_service\\Fleet_Service.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\phamv\\.nuget\\packages\\dnsclient\\1.6.1\\dnsclient.1.6.1.nupkg.sha512",
     "C:\\Users\\phamv\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.8\\microsoft.aspnetcore.openapi.10.0.8.nupkg.sha512",
@@ -19,9 +19,9 @@
       "code": "NU1903",
       "level": "Warning",
       "message": "Package 'Microsoft.OpenApi' 2.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-v5pm-xwqc-g5wc",
-      "projectPath": "D:\\PhamV.Hinh\\Logistics_Application\\Services\\Fleet_Service\\Fleet_Service.csproj",
+      "projectPath": "D:\\PhamV.Hinh\\Logistics_Application\\Services\\Fleet_service\\Fleet_Service.csproj",
       "warningLevel": 1,
-      "filePath": "D:\\PhamV.Hinh\\Logistics_Application\\Services\\Fleet_Service\\Fleet_Service.csproj",
+      "filePath": "D:\\PhamV.Hinh\\Logistics_Application\\Services\\Fleet_service\\Fleet_Service.csproj",
       "libraryId": "Microsoft.OpenApi",
       "targetGraphs": [
         "net10.0"
