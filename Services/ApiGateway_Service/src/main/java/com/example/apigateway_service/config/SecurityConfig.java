@@ -32,11 +32,13 @@ public class SecurityConfig {
                         // Public API
                         .requestMatchers("/account/auth/**").permitAll()
                         .requestMatchers("/account/auth/register", "/account/auth/login", "/account/auth/refresh-token", "/account/check-email/**", "/account/check-username/**").permitAll()
-                        .requestMatchers("/api/roles").permitAll()
+                        .requestMatchers("/api/roles", "/api/roles/**").permitAll()
+                        .requestMatchers("/api/v1/customers/**").permitAll()
                         .requestMatchers("/auth/refresh-token").permitAll()
                         .requestMatchers("/api/container/**").permitAll()
                         .requestMatchers("/api/driver/**").permitAll()
                         .requestMatchers("/api/vehicle/**").permitAll()
+                        .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
                         // Các API khác phải có JWT
                         .anyRequest().authenticated()
                 )
