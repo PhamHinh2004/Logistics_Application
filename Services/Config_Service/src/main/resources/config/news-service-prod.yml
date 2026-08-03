@@ -3,7 +3,7 @@ server:
 spring:
   data:
     redis:
-      uri: rediss://default:gQAAAAAAAsEVAAIgcDJjNTk5Y2RkODE1Mzk0ZWJmOWFlNWNlYjZkMWI0NzBmMA@related-louse-180501.upstash.io:6379
+      url: rediss://default:gQAAAAAAAsEVAAIgcDJjNTk5Y2RkODE1Mzk0ZWJmOWFlNWNlYjZkMWI0NzBmMA@related-louse-180501.upstash.io:6379
 eureka:
   client:
     service-url:

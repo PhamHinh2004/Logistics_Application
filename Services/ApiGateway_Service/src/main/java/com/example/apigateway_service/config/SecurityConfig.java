@@ -40,6 +40,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/vehicle/**").permitAll()
                         .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
                         .requestMatchers("/v1/api/news", "/v1/api/news/**").permitAll()
+                        .requestMatchers("/error").permitAll()
                         // Các API khác phải có JWT
                         .anyRequest().authenticated()
                 )
