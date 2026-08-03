@@ -39,10 +39,10 @@ public class SecurityConfig {
                         .requestMatchers("/api/driver/**").permitAll()
                         .requestMatchers("/api/vehicle/**").permitAll()
                         .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
+                        .requestMatchers("/v1/api/news", "/v1/api/news/**").permitAll()
                         // Các API khác phải có JWT
                         .anyRequest().authenticated()
                 )
-
                 .addFilterBefore(
                         jwtGatewayFilter,
                         UsernamePasswordAuthenticationFilter.class
@@ -57,8 +57,8 @@ public class SecurityConfig {
 
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(
-                List.of("http://localhost:5173")
+        configuration.setAllowedOriginPatterns(
+                List.of("*")
         );
 
         configuration.setAllowedMethods(
