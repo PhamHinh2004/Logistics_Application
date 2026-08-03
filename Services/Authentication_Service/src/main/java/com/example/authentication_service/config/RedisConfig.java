@@ -11,7 +11,7 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 @Configuration
 public class RedisConfig {
 
-    @Value("${spring.data.redis.uri}")
+    @Value("${spring.data.redis.url}")
     private String redisUri;
 
     @Bean

@@ -15,17 +15,21 @@ spring:
             uri: lb://CUSTOMER-SERVICE
             predicates:
               - Path=/api/v1/customers/**
+          - id: news-service
+            uri: lb://NEWS-SERVICE
+            predicates:
+              - Path=/v1/api/news/**
             # ASP.NET Core — dùng URL trực tiếp
           - id: container-service
-            uri: ${FLEET_SERVICE_URL:https://tms-fleet-service.onrender.com}
+            uri: ${FLEET_SERVICE_URL:http://localhost:9002}
             predicates:
               - Path=/api/container/**
           - id: driver-service
-            uri: ${FLEET_SERVICE_URL:https://tms-fleet-service.onrender.com}
+            uri: ${FLEET_SERVICE_URL:http://localhost:9002}
             predicates:
               - Path=/api/driver/**
           - id: vehicle-service
-            uri: ${FLEET_SERVICE_URL:https://tms-fleet-service.onrender.com}
+            uri: ${FLEET_SERVICE_URL:http://localhost:9002}
             predicates:
               - Path=/api/vehicle/**
 eureka:
