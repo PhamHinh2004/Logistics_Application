@@ -77,6 +77,8 @@ public class SecurityConfig {
                                 .requestMatchers("/account/auth/register", "/account/auth/login", "/account/auth/refresh-token", "/account/check-email/**", "/account/check-username/**").permitAll()
                                 .requestMatchers("/api/roles").permitAll()
                                 .requestMatchers("/auth/refresh-token").permitAll()
+                                .requestMatchers("/error").permitAll()
+                                .requestMatchers("/actuator/health").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
