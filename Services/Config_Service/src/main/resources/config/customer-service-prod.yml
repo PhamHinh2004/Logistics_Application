@@ -15,7 +15,11 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: ${EUREKA_URL:http://localhost:8061/eureka}
+      defaultZone: ${EUREKA_SERVER_URL:http://discovery-service:8061/eureka}
+    instance:
+      hostname: ${EUREKA_INSTANCE_HOSTNAME:customer-service}
+      prefer-ip-address: false
+      instance-id: ${spring.application.name}:${server.port}  
 server:
   port: 9001
 management:
