@@ -8,6 +8,10 @@ eureka:
   client:
     service-url:
       defaultZone: ${EUREKA_SERVER_URL:http://discovery-service:8061/eureka}
+    instance:
+      hostname: ${EUREKA_INSTANCE_HOSTNAME:customer-service}
+      prefer-ip-address: false
+      instance-id: ${spring.application.name}:${server.port}  
 gnews:
   api:
     key: ${GNEWS_API_KEY}

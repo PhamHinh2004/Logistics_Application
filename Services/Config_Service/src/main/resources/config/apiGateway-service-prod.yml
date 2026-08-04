@@ -16,7 +16,7 @@ spring:
             predicates:
               - Path=/api/v1/customers/**
           - id: news-service
-            uri: lb://NEWS-SERVICE
+            uri: ${NEWS_SERVICE_URL:https://tms-news-service.onrender.com}
             predicates:
               - Path=/v1/api/news/**
             # ASP.NET Core — dùng URL trực tiếp
@@ -35,8 +35,11 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: ${EUREKA_SERVICE_URL:https://logistics-application-7wb0.onrender.com/eureka}
-
+      defaultZone: ${EUREKA_SERVER_URL:http://discovery-service:8061/eureka}
+    instance:
+      hostname: ${EUREKA_INSTANCE_HOSTNAME:customer-service}
+      prefer-ip-address: false
+      instance-id: ${spring.application.name}:${server.port}  
 server:
   port: 8060
 
